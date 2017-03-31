@@ -1,0 +1,46 @@
+fuge_global:
+  tail: true
+  monitor: false
+  auto_generate_environment: false
+  monitor_excludes:
+    - '**/node_modules/**'
+    - '**/.git/**'
+    - '**/*.log'
+  environment:
+    - BASES=127.0.0.1:39000,127.0.0.1:39001
+    - HOST=127.0.0.1
+    - SILENT=true
+base0:
+  type: node
+  path: ../base
+  run: node base.js
+  ports:
+    - main=39000
+  environment:
+    - TAG=base0
+    - PORT=39000
+base1:
+  type: node
+  path: ../base
+  run: node base.js
+  ports:
+    - main=39001
+  environment:
+    - TAG=base1
+    - PORT=39001
+api:
+  type: node
+  path: ../api
+  run: node api-service.js
+  ports:
+    - main=4000
+  environment:
+    - PORT=0
+user:
+  type: node
+  path: ../user
+  run: node user-service-mongo.js
+auth:
+  type: node
+  path: ../auth
+  run: node auth-service.js

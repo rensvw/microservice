@@ -1,0 +1,30 @@
+{
+  "name": "micro-service-api",
+  "version": "1.0.0",
+  "description": "The api microservice",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rens van Woudenberg",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.2",
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.2",
+    "express": "^4.15.2",
+    "seneca": "^3.3.0",
+    "seneca-balance-client": "^0.6.0",
+    "seneca-basic": "^0.5.0",
+    "seneca-demo-logger": "^0.2.0",
+    "seneca-entity": "^2.0.0",
+    "seneca-mesh": "^0.10.0",
+    "seneca-mongo-store": "^1.1.0",
+    "seneca-web": "^2.0.0",
+    "seneca-web-adapter-express": "^1.0.2"
+  },
+  "devDependencies": {
+    "fuge": "^0.8.1"
+  }
+}
