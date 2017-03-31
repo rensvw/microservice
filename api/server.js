@@ -17,6 +17,7 @@ var senecaWebConfig = {
 var app = Express()
       .use( require('body-parser').urlencoded({extended: true}) )
       .use( context )
+      
       .listen(4000)
 
 var seneca = require('seneca')()
@@ -29,6 +30,6 @@ var seneca = require('seneca')()
           silent: JSON.parse(SILENT),
           swim: {interval: 1111}
         }
-    })
+    });
 
       

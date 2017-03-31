@@ -4,12 +4,15 @@ module.exports = function api(options) {
   this.add({ role:'api', path:'authenticate' }, authenticate);
   this.add({ role:'api', path:'hello' }, hello);
   this.add({ role:'api', path:'signUp' }, signUp);
-  this.add({ role:'api', path:'verifyToken' }, getUser);
+  this.add({ role:'api', path:'verify' }, verify);
+  
+  this.add({ role:'api', path:'verifySMS' }, getUser);
   this.add({ role:'api', path:'verifyAccount' }, getUser);
   this.add({ role:'api', path:'newSMSCode' }, getUser);
 
   this.add('init:api', function (msg, respond) {
-    this.act('role:web',{routes:{
+    this.act('role:web',
+    {routes:{
       prefix: '/api',
       pin:    'role:api,path:*',
       map: {
@@ -22,11 +25,26 @@ module.exports = function api(options) {
         getUser: { GET:true },      
         hello: {GET:true}  
       }
-    }}, respond)
-  })
+    }}, respond);
+  });
 
   function hello(msg,respond){
     respond({answer:'hello'});
+  }
+
+  function verify(msg, respond){
+    let token = msg.args.body.token || msg.args.query.token || msg.headers['x-acces-token'];
+    if(token){
+      this.act('role:token,msg:verify',{
+        token: token
+      }, respond);
+    }
+    else{
+      respond(err,{
+        succes: false,
+        message: "No token provided"
+      });
+    }
   }
 
   function getUser(msg,respond){
