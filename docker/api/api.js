@@ -1,7 +1,7 @@
 module.exports = function api(options) {
 
   this.add({ role:'api', path:'getUser' }, getUser );
-  this.add({ role:'api', path:'authenticate' }, getUser);
+  this.add({ role:'api', path:'authenticate' }, authenticate);
   this.add({ role:'api', path:'hello' }, hello);
   this.add({ role:'api', path:'signUp' }, signUp);
   this.add({ role:'api', path:'verifyToken' }, getUser);
@@ -30,17 +30,19 @@ module.exports = function api(options) {
   }
 
   function getUser(msg,respond){
-    this.act('role:user,cmd:get',
-    respond)
+    this.act('role:user,cmd:get',{
+      email: msg.args.query.email
+    },
+    respond);
   }
 
   function authenticate(msg,respond){
     let email = msg.args.body.email;
     let password = msg.args.body.password;
     this.act('role:auth,cmd:authenticate',{
-      email: email,
-      password: password
-    }, respond)
+      password: password,
+      email: email
+    }, respond);
   }
 
   function signUp(msg, respond){

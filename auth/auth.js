@@ -29,17 +29,19 @@ module.exports = function auth(options) {
     let email = msg.email;
     let password = msg.password;
     let seneca = this;
-    console.log(password);
-    
     seneca.act('role:user,cmd:get',{
       email:email
     },function(err,user){
-      console.log(user);
       if(err){
         respond(err,null);
       }
-      if(user){
-
+      else if(!user){
+        respond(null,{
+          succes: false,
+          message: "User could not be found!"
+        });
+      }
+      else if(user){
         bcrypt.compare(password, user.password, function(err, res) {
           if(err){
             respond(err,null);
@@ -51,15 +53,12 @@ module.exports = function auth(options) {
             });
           }
           else if(res){
-            respond(null,{
-              succes: true,
-              message: "Welcome!"
-            });
+             seneca.act('role:token,cmd:create',{
+                user: user
+              },respond);
           }
         });
       }
     });
-  
   }
-
 };

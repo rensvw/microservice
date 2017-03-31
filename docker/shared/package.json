@@ -14,6 +14,7 @@
     "body-parser": "^1.17.1",
     "cors": "^2.8.2",
     "express": "^4.15.2",
+    "jsonwebtoken": "^7.3.0",
     "seneca": "^3.3.0",
     "seneca-balance-client": "^0.6.0",
     "seneca-basic": "^0.5.0",

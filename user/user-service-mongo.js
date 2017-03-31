@@ -12,12 +12,12 @@ seneca
 })
   .use('mesh',{
     pin: 'role:user,cmd:*',
-      host:HOST,
+    host:HOST,
     bases:BASES,
     sneeze: {
       silent: JSON.parse(SILENT),
       swim: {interval: 1111}
     }
-  })
+  });
 
 

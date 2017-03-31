@@ -10,6 +10,9 @@
       if(err){
         respond(err,null);
       }
+      if(!user){
+        respond(err,null);
+      }
       if(user){
         respond(err,{
           email: user.email,
