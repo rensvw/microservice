@@ -2,7 +2,7 @@
 // node base.js base1 39001 127.0.0.1 127.0.0.1:39000,127.0.0.1:39001
 var TAG = process.env.TAG || process.argv[2] || 'base'
 var PORT = process.env.PORT || process.argv[3] || 39999
-var HOST = process.env.HOST || process.argv[4] || ''
+var HOST = process.env.HOST || process.argv[4] || '127.0.0.1'
 var BASES = (process.env.BASES || process.argv[5] || '127.0.0.1:39000,127.0.0.1:39001').split(',')
 var SILENT = process.env.SILENT || process.argv[6] || 'true'
 

@@ -4,7 +4,23 @@
   this.add({'role':'user','cmd':'get'}, getUser);
 
   function getUser(msg, respond) {
-    
+    var user = this.make$('user');
+    var email = msg.email;
+    user.load$({email:email},function(err,user){
+      if(err){
+        respond(err,null);
+      }
+      if(user){
+        respond(err,{
+          email: user.email,
+          password: user.password,
+          fullName: user.fullName,
+          countryCode: user.countryCode,
+          mobilePhoneNumber: user.mobilePhoneNumber,
+          verified: user.verified
+        });
+      }
+    });
   }
   //working
   function createUser(msg, respond) {
@@ -16,11 +32,16 @@
     user.mobilePhoneNumber = msg.mobilePhoneNumber;
     user.verified = false;
     user.save$((err,user) => {
+      if(err){
+        respond(err,null);
+      }
+      if(user){
       respond(err,{
         message: "Account created!",
         succes: true,
         email: user.email
       });
+      }
     });
   }
 

@@ -4,7 +4,7 @@ module.exports = function auth(options) {
   const saltRounds = 14;
 
   this.add({role:'auth',cmd:'signup'}, signup);
-  this.add({role:'auth',cmd:'authenticate'}, signup);
+  this.add({role:'auth',cmd:'authenticate'}, authenticate);
 
   //working
   function signup(msg, respond) {
@@ -21,41 +21,45 @@ module.exports = function auth(options) {
       password: hash,
       countryCode: countryCode,
       mobilePhoneNumber: mobilePhoneNumber
-    }, respond)
+    }, respond);
   });
   }
 
   function authenticate(msg,respond){
     let email = msg.email;
     let password = msg.password;
-    this.act('role:user,cmd:get',{
+    let seneca = this;
+    console.log(password);
+    
+    seneca.act('role:user,cmd:get',{
       email:email
     },function(err,user){
+      console.log(user);
       if(err){
-        respond(console.log(err),null)
+        respond(err,null);
       }
-      else{
-        console.log(user);
-        if(!user){
-          respond(null,{message:"User could not be found!"})
-        }
-        else if (user){
-          let hash = user.password;
-          bcrypt.compare(password,hash,function(err,response){
-            if(!response){
-              respond(null,{message:"Authentication failed, username or password is wrong!"})
-            }
-            else{
-              respond(null,{
-                succes:true,
-                email:user.email,
-                password:user.password
-              })
-            }
-          })
-        }
+      if(user){
+
+        bcrypt.compare(password, user.password, function(err, res) {
+          if(err){
+            respond(err,null);
+          }
+          else if (!res){
+            respond(null,{
+              succes: false,
+              message: "Username or password is incorrect!"
+            });
+          }
+          else if(res){
+            respond(null,{
+              succes: true,
+              message: "Welcome!"
+            });
+          }
+        });
       }
-    })
+    });
+  
   }
 
-}
+};
