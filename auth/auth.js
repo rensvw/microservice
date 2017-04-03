@@ -15,7 +15,7 @@ module.exports = function auth(options) {
     let mobilePhoneNumber = msg.mobilePhoneNumber;
     let seneca = this;
     bcrypt.hash(password, saltRounds, function (err, hash) {
-      seneca.act('role:user,cmd:create',{
+      seneca.act('role:user,cmd:create,checkExistingUser:true',{
       email: email,
       fullName: fullName,
       password: hash,
@@ -59,7 +59,8 @@ module.exports = function auth(options) {
           }*/
           else if(res){
             respond(null,{
-              user: user,
+              user: { email: user.email,
+              fullName: user.fullName},
               succes: true,
               message: "Username and password is correct!"
             })

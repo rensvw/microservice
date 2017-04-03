@@ -1,4 +1,4 @@
-var PORT = process.env.PORT || process.argv[2] || 4002;
+var PORT = process.env.PORT || process.argv[2] || 3000;
 var HOST = process.env.HOST || process.argv[2] || '127.0.0.1';
 var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
 var SILENT = process.env.SILENT || process.argv[4] || 'true';
@@ -6,15 +6,12 @@ var SILENT = process.env.SILENT || process.argv[4] || 'true';
 const Chairo = require('chairo');
 const Seneca = require('seneca');
 const tag = 'api';
-
 const Joi = require('joi');
-
 const Hapi = require('hapi');
 const Handlebars = require('handlebars');
 const Boom = require('boom');
 const Bcrypt = require('bcrypt');
 const CookieAuth = require('hapi-auth-cookie');
-
 
 // create new server instance
 const server = new Hapi.Server();
@@ -87,7 +84,6 @@ server.register(plugins, function (err) {
       method: 'GET',
       path: '/logout',
       config: {
-
         handler: logout
       }
     },
@@ -95,8 +91,16 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/signup',
       config: {
+        validate: {
+          payload: {
+            email: Joi.string().email().required(),
+            password: Joi.string().min(2).max(200).required(),
+            fullName: Joi.string().min(2).max(200).required(),
+            countryCode: Joi.string().min(2).max(5).required(),
+            mobilePhoneNumber: Joi.number().required()
+          }
+        },
         handler: signUp,
-
         auth: {
           mode: 'try'
         },
@@ -161,20 +165,12 @@ const login = (request, reply) => {
     password: password,
     email: email
   }, function (err, respond) {
-
     if (err) {
-      return reply(respond(err, null));
+      return reply(Boom.badRequest(respond(err)));
     } else if (respond.succes == true) {
-      let user = respond.user;
-      request.cookieAuth.set({
-        email: user.email,
-        name: user.fullName
-      });
-
+      request.cookieAuth.set(respond.user);
       return reply(respond);
-
     } else if (respond.succes == false) {
-
       return reply(Boom.unauthorized('Username or password is wrong!'));
     }
   });
@@ -201,7 +197,7 @@ const signUp = (request, reply) => {
     mobilePhoneNumber: mobilePhoneNumber
   }, function (err, respond) {
     if (err) {
-      return reply(respond(err, null));
+      return reply(Boom.badRequest(respond(err, null)));
     } else {
       return reply(respond);
     }
