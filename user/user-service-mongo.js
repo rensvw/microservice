@@ -6,7 +6,7 @@ var seneca = require('seneca')()
 seneca
   .use('entity')
   .use('basic')
-  .use('user')
+  .use(require('./user'))
   .use('mongo-store', {
   uri: 'mongodb://rensvanw:zb74jt3bzn.@ds157439.mlab.com:57439/qnh'
 })

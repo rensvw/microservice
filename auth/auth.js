@@ -52,10 +52,17 @@ module.exports = function auth(options) {
               message: "Username or password is incorrect!"
             });
           }
-          else if(res){
+          /*else if(res){
              seneca.act('role:token,cmd:create',{
                 user: user
               },respond);
+          }*/
+          else if(res){
+            respond(null,{
+              user: user,
+              succes: true,
+              message: "Username and password is correct!"
+            })
           }
         });
       }

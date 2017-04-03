@@ -3,7 +3,7 @@ var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:
 var SILENT = process.env.SILENT || process.argv[4] || 'true'
 
 require('seneca')()
-  .use('auth')
+  .use(require('./auth'))
   .use('mesh',{
     pin: 'role:auth,cmd:*',
     bases: BASES,

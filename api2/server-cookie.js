@@ -1,4 +1,3 @@
-
 var PORT = process.env.PORT || process.argv[2] || 4002;
 var HOST = process.env.HOST || process.argv[2] || '127.0.0.1';
 var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
@@ -6,131 +5,205 @@ var SILENT = process.env.SILENT || process.argv[4] || 'true';
 
 const Chairo = require('chairo');
 const Seneca = require('seneca');
-const Rif = require('rif');
 const tag = 'api';
-var Hapi = require('hapi')
-var Good = require('good')
-var Vision = require('vision')
-var Users = require('./users-db')
-var Handlebars = require('handlebars')
-var CookieAuth = require('hapi-auth-cookie')
 
-var rif = Rif();
-var host = rif(HOST) || HOST
+const Joi = require('joi');
+
+const Hapi = require('hapi');
+const Handlebars = require('handlebars');
+const Boom = require('boom');
+const Bcrypt = require('bcrypt');
+const CookieAuth = require('hapi-auth-cookie');
+
+
 // create new server instance
-var server = new Hapi.Server()
+const server = new Hapi.Server();
 
 // add server’s connection information
 server.connection({
   host: 'localhost',
   port: 3000
-})
+});
 
 // register plugins to server instance
-server.register([
-  {
-    register: Vision
-  },
-  {
-    register: Good,
-    options: {
-      ops: {
-        interval: 10000
-      },
-      reporters: {
-        console: [
-          {
-            module: 'good-squeeze',
-            name: 'Squeeze',
-            args: [ { log: '*', response: '*', request: '*' } ]
-          },
-          {
-            module: 'good-console'
-          },
-          'stdout'
-        ]
-      }
-    }
-  },
-  {
-    register: CookieAuth
-  },
-  { register: Chairo,
-    options: {
-        seneca: Seneca({
-            tag: tag,
-            internal: {
-                logger: require('seneca-demo-logger')
-            },
-            debug: {
-                short_logs: true
-            }
-        })
-        //.use('zipkin-tracer', {sampling:1})
-    }
-}
-], function (err) {
+var plugins = require('./plugins');
+server.register(plugins, function (err) {
   if (err) {
-    server.log('error', 'failed to install plugins')
-
-    throw err
+    server.log('error', 'failed to install plugins');
+    throw err;
   }
 
-  server.log('info', 'Plugins registered')
+  server.log('info', 'Plugins registered');
 
-  /**
-   * view configuration
-   */
-
-
-  // validation function used for hapi-auth-cookie: optional and checks if the user is still existing
-  var validation = function (request, session, callback) {
-    var username = session.username
-    var user = Users[ username ]
-
-    if (!user) {
-      return callback(null, false)
-    }
-
-    server.log('info', 'user authenticated')
-    callback(err, true, user)
-  }
-
+  // Set authentication strategy
   server.auth.strategy('session', 'cookie', true, {
-    password: 'm!*"2/),p4:xDs%KEgVr7;e#85Ah^WYC',
-    cookie: 'future-studio-hapi-tutorials-cookie-auth-example',
-    redirectTo: '/',
-    isSecure: false,
-    validateFunc: validation
-  })
+    password: 'worldofwalmartsdgjsdfjgksdgfjksdfhjksdfhsdjksdfjsdhkshdfjkl', // cookie secret
+    cookie: 'session', // Cookie name
+    redirectTo: false, // Let's handle our own redirections
+    isSecure: false, // required for non-https applications
+    ttl: 24 * 60 * 60 * 1000, // Set session to 1 day
+    //validateFunc: validation
+
+  });
 
   server.log('info', 'Registered auth strategy: cookie auth')
 
-  var routes = require('./cookie-routes')
-  server.route(routes)
-  server.log('info', 'Routes registered')
+  // Routes
+  server.route([{
+      method: 'GET',
+      path: '/',
+      config: {
+
+        auth: 'session',
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        },
+        handler: testAuth
+      }
+    }, {
+      method: 'POST',
+      path: '/login',
+      config: {
+        validate: {
+          payload: {
+            email: Joi.string().email().required(),
+            password: Joi.string().min(2).max(200).required()
+          }
+        },
+        handler: login,
+        auth: {
+          mode: 'try'
+        },
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      }
+    },
+    {
+      method: 'GET',
+      path: '/logout',
+      config: {
+
+        handler: logout
+      }
+    },
+    {
+      method: 'POST',
+      path: '/signup',
+      config: {
+        handler: signUp,
+
+        auth: {
+          mode: 'try'
+        },
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      }
+    }
+  ]);
+
+  server.log('info', 'Routes registered');
 
   // start your server after plugin registration
   server.start(function (err) {
     if (err) {
       server.log('error', 'failed to start server')
-      server.log('error', err)
+      server.log('error', err);
 
       throw err
     }
-
     server.log('info', 'Server running at: ' + server.info.uri)
-  })
-})
+  });
+});
 
+// Set up mesh network
 server.seneca
-    .use('mesh', {
-        host: HOST,
-        bases: BASES,
-        sneeze: {
-            silent: JSON.parse(SILENT),
-            swim: {
-                interval: 1111
-            }
-        }
+  .use('mesh', {
+    host: HOST,
+    bases: BASES,
+    sneeze: {
+      silent: JSON.parse(SILENT),
+      swim: {
+        interval: 1111
+      }
+    }
+  });
+
+// Tests if user is logged in!
+const testAuth = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      auth: 'yessss'
     });
+  }
+  return reply({
+    auth: 'nooooo'
+  });
+}
+
+// Function for logging in!
+const login = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+
+    if (err) {
+      return reply(respond(err, null));
+    } else if (respond.succes == true) {
+      let user = respond.user;
+      request.cookieAuth.set({
+        email: user.email,
+        name: user.fullName
+      });
+
+      return reply(respond);
+
+    } else if (respond.succes == false) {
+
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+};
+
+//Function for logging out!
+const logout = (request, reply) => {
+  request.cookieAuth.clear();
+  return reply('You are logged out!');
+}
+
+// Function for registering!
+const signUp = (request, reply) => {
+  let email = request.payload.email;
+  let fullName = request.payload.fullName;
+  let password = request.payload.password;
+  let countryCode = request.payload.countryCode;
+  let mobilePhoneNumber = request.payload.mobilePhoneNumber;
+  server.seneca.act('role:auth,cmd:signup', {
+    email: email,
+    fullName: fullName,
+    password: password,
+    countryCode: countryCode,
+    mobilePhoneNumber: mobilePhoneNumber
+  }, function (err, respond) {
+    if (err) {
+      return reply(respond(err, null));
+    } else {
+      return reply(respond);
+    }
+  });
+};
