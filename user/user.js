@@ -139,31 +139,30 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
   user.verified = false;
   user.smsCodes = {};
   this.act('role:user,cmd:get', {
-      email: user.email
-    }, function (err, user) {
-      if (err) {
-        respond(err, null);
-      } else if (user) {
-        respond(null, {
-          succes: false,
-          message: "Email does already exist!"
-        });
-      } else {
-        user.save$((err, user) => {
-          if (err) {
-            respond(err, null);
-          }
-          if (user) {
-            respond(err, {
-              message: "Account created!",
-              succes: true,
-              email: user.email
-            });
-          }
-        });
-      }
+    email: user.email
+  }, function (err, newUser) {
+    if (err) {
+      respond(err, null);
+    } else if (newUser) {
+      respond(null, {
+        succes: false,
+        message: "Email does already exist!"
+      });
+    } else if (!newUser) {
+      user.save$((err, user) => {
+        if (err) {
+          respond(err, null);
+        }
+        if (user) {
+          respond(err, {
+            message: "Account created!",
+            succes: true,
+            email: user.email
+          });
+        }
+      });
     }
-  );
+  });
 }
 };
 

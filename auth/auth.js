@@ -25,7 +25,9 @@ module.exports = function auth(options) {
       countryCode: countryCode,
       mobilePhoneNumber: mobilePhoneNumber
     }, respond);
-  });
+      
+    });
+  
   }
 
   function authenticate(msg,respond){
