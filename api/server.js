@@ -194,9 +194,7 @@ const login = (request, reply) => {
 
 const update = (request,reply) => {
   let email = request.payload.email;
-  let smsCode = request.payload.smsCode;
-  server.seneca.act('role:user,cmd:update', {
-    smsCode: smsCode,
+  server.seneca.act('role:sms,cmd:save,send:true', {
     email: email
   }, function (err, respond){
     return reply(respond);

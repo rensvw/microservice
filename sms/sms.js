@@ -25,8 +25,37 @@ module.exports = function sms(options){
         });
     }
 
-    function createSMSCodeAndSendTextMessage(msg,respond){
-      
+    function createSMSCodeAndSendTextMessage(msg, respond) {
+        let smsCode = randomID(6, '0');
+        let email = msg.email;
+        this.act('role:user,cmd:update,service:sms', {
+            email: email,
+            smsCode: smsCode
+        }, function (err, user) {
+            if (err) {
+                respond(err, null);
+            }
+            if (user.succes == true) {
+                this.act('role:sms,cmd:send', {
+                    message: smsCode,
+                    to: user.countryCode + user.mobilePhoneNumber
+                }, function (err, result) {
+                    if (err) {
+                        respond(err, null)
+                    } else {
+                        respond(err, {
+                            uuid: user.uuid,
+                            message: result.message
+                        });
+                    }
+                });
+            }
+            if (user.succes == false) {
+                respond(err, {
+                    message: "Something went wrong while updating the user object!"
+                })
+            }
+        });
     }
        
 

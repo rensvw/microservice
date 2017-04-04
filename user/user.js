@@ -1,14 +1,12 @@
-var moment = require('moment');
+const moment = require('moment');
+const uuidV4 = require('uuid/v4');
 
 module.exports = function user( options ) {
 
 this.add({role:'user',cmd:'create'}, createUser);
 this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
 this.add({'role':'user','cmd':'get'}, getUser);
-this.add({'role':'user','cmd':'update'}, updateUser);
-
-
-this.add({'role':'user','cmd':'addSMSCodeToUser'}, addSMSCodeToUser);
+this.add({'role':'user','cmd':'update','service':'sms'}, updateUserWithSMSCode);
 
 function getUser(msg, respond) {
   var user = this.make$('user');
@@ -35,7 +33,7 @@ function getUser(msg, respond) {
   });
 }
 
-function updateUser(msg,respond){
+function updateUserWithSMSCode(msg,respond){
   var user = this.make$('user');
   user.load$({
     email: msg.email
@@ -43,14 +41,19 @@ function updateUser(msg,respond){
     result.data$({
       smsCode: {
         code: msg.smsCode,
-        timeCreated: moment()}
+        timeCreated: moment(),
+        uuid: uuidV4()
+      }
     });
     result.save$(function(err,user){
-      respond(err,user.data$(false));
+      respond(err,{ succes:true,
+      message: "Succesfully added the generated code to the user object!",
+      uuid: user.smsCode.uuid,
+      countryCode: user.countryCode,
+      mobilePhoneNumber: user.mobilePhoneNumber});
     });
     }
   );
-  
 }
 
 //working
