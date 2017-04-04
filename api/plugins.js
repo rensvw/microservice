@@ -5,12 +5,28 @@ var Hapi = require('hapi')
 var Good = require('good')
 var Vision = require('vision')
 var CookieAuth = require('hapi-auth-cookie')
+const Inert = require('inert');
+
+const HapiSwagger = require('hapi-swagger');
 
 
-var plugins = [
+const options = {
+    info: {
+            'title': 'SecurityPoC API Documentation',
+            'version': '1',
+        }
+    };
+
+var plugins = [{
+   register: Inert
+},
   {
     register: Vision
   },
+  {
+        register: HapiSwagger,
+        options: options
+    },
   {
     register: Good,
     options: {

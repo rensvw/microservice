@@ -13,8 +13,10 @@ const Boom = require('boom');
 const Bcrypt = require('bcrypt');
 const CookieAuth = require('hapi-auth-cookie');
 
+
 // create new server instance
 const server = new Hapi.Server();
+
 
 // add server’s connection information
 server.connection({
@@ -24,6 +26,7 @@ server.connection({
 
 // register plugins to server instance
 const plugins = require('./plugins');
+
 server.register(plugins, function (err) {
   if (err) {
     server.log('error', 'failed to install plugins');
@@ -50,7 +53,9 @@ server.register(plugins, function (err) {
       method: 'GET',
       path: '/',
       config: {
-
+        description: 'Check if the user is currently logged in!',
+        notes: 'Returns a message with a yessss or noooo',
+        tags: ['api'],
         auth: 'session',
         plugins: {
           'hapi-auth-cookie': {
@@ -63,6 +68,9 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/login',
       config: {
+        description: 'Login route',
+        notes: 'Returns true if correctly logged in',
+        tags: ['api'],
         validate: {
           payload: {
             email: Joi.string().email().required(),
@@ -83,6 +91,9 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/login-sms',
       config: {
+        description: 'Login route with sms as two factor authentication',
+        notes: 'Returns a guid if username and password are correct.',
+        tags: ['api'],
         validate: {
           payload: {
             email: Joi.string().email().required(),
@@ -104,6 +115,9 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/update',
       config: {
+        description: 'Updates an user with a new sms code. ONLY FOR DEBUGGING',
+        notes: 'Returns user object',
+        tags: ['api'],
          validate: {
           payload: {
             email: Joi.string().email().required()
@@ -124,6 +138,9 @@ server.register(plugins, function (err) {
       method: 'GET',
       path: '/logout',
       config: {
+        description: 'Logout route',
+        notes: 'Returns true if correctly logged out',
+        tags: ['api'],
         handler: logout
       }
     },
@@ -131,6 +148,9 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/signup',
       config: {
+        description: 'Registers a new user',
+        notes: 'Returns true if user is created and saved to database',
+        tags: ['api'],
         validate: {
           payload: {
             email: Joi.string().email().required(),

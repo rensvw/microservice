@@ -24,6 +24,8 @@
     "hapi": "^16.1.0",
     "hapi-auth-basic": "^4.2.0",
     "hapi-auth-cookie": "^7.0.0",
+    "hapi-swagger": "^7.7.0",
+    "inert": "^4.2.0",
     "jsonwebtoken": "^7.3.0",
     "lodash": "^4.17.4",
     "rif": "^0.3.0",
