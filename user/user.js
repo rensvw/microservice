@@ -6,6 +6,8 @@ module.exports = function user( options ) {
 this.add({role:'user',cmd:'create'}, createUser);
 this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
 this.add({'role':'user','cmd':'get'}, getUser);
+this.add({'role':'user','cmd':'get','param':'uuid'}, getUserByUuid);
+
 this.add({'role':'user','cmd':'update','service':'sms'}, updateUserWithSMSCode);
 
 function getUser(msg, respond) {
@@ -13,6 +15,31 @@ function getUser(msg, respond) {
   var email = msg.email;
   user.load$({
     email: email
+  }, function (err, user) {
+    if (err) {
+      respond(err, null);
+    }
+    if (!user) {
+      respond(err, null);
+    }
+    if (user) {
+      respond(err, {
+        email: user.email,
+        password: user.password,
+        fullName: user.fullName,
+        countryCode: user.countryCode,
+        mobilePhoneNumber: user.mobilePhoneNumber,
+        verified: user.verified
+      });
+    }
+  });
+}
+
+function getUserByUuid(msg, respond) {
+  let user = this.make$('user');
+  let uuid = msg.uuid;
+  user.load$({
+    uuid: uuid
   }, function (err, user) {
     if (err) {
       respond(err, null);

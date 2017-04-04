@@ -6,7 +6,8 @@ module.exports = function sms(options){
 
     this.add({role:'sms',cmd:'send'}, sendTextMessage);
     this.add({role:'sms',cmd:'save',send:'true'}, createSMSCodeAndSendTextMessage)
-
+    this.add({role:'sms',cmd:'verify'}, verifySMSCode);
+    
     function sendTextMessage(msg,respond){
         let message = msg.message;
         let to = msg.to;
@@ -59,7 +60,8 @@ module.exports = function sms(options){
     }
 
     function verifySMSCode(msg,respond){
-        
+        let uuid = msg.uuid;
+        let code = msg.code;
     }
        
 

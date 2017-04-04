@@ -51,7 +51,7 @@ server.register(plugins, function (err) {
   // Routes
   server.route([{
       method: 'GET',
-      path: '/',
+      path: '/api/',
       config: {
         description: 'Check if the user is currently logged in!',
         notes: 'Returns a message with a yessss or noooo',
@@ -66,7 +66,7 @@ server.register(plugins, function (err) {
       }
     }, {
       method: 'POST',
-      path: '/login',
+      path: '/api/login',
       config: {
         description: 'Login route',
         notes: 'Returns true if correctly logged in',
@@ -89,7 +89,7 @@ server.register(plugins, function (err) {
       }
     }, {
       method: 'POST',
-      path: '/login-sms',
+      path: '/api/login-sms',
       config: {
         description: 'Login route with sms as two factor authentication',
         notes: 'Returns a guid if username and password are correct.',
@@ -113,7 +113,7 @@ server.register(plugins, function (err) {
     },
      {
       method: 'POST',
-      path: '/update',
+      path: '/api/update',
       config: {
         description: 'Updates an user with a new sms code. ONLY FOR DEBUGGING',
         notes: 'Returns user object',
@@ -136,7 +136,7 @@ server.register(plugins, function (err) {
     },
     {
       method: 'GET',
-      path: '/logout',
+      path: '/api/logout',
       config: {
         description: 'Logout route',
         notes: 'Returns true if correctly logged out',
@@ -146,7 +146,7 @@ server.register(plugins, function (err) {
     },
     {
       method: 'POST',
-      path: '/signup',
+      path: '/api/signup',
       config: {
         description: 'Registers a new user',
         notes: 'Returns true if user is created and saved to database',
