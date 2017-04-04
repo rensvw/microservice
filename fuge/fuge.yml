@@ -12,7 +12,7 @@ fuge_global:
     - SILENT=true
 base0:
   type: node
-  path: ../base
+  build: ../base/
   run: node base.js
   ports:
     - main=39000
@@ -21,7 +21,7 @@ base0:
     - PORT=39000
 base1:
   type: node
-  path: ../base
+  path: ../docker/base
   run: node base.js
   ports:
     - main=39001

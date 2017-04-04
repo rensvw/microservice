@@ -4,49 +4,83 @@ module.exports = {
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
    */
   apps : [
-
+    {
+    name        : "base0",
+    script      : "./base/base.js",
+    watch       : './base',
+    env: {
+      "NODE_ENV": "development",
+      "PORT"  : 39000
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+  },
+  {
+    name        : "base1",
+    script      : "./base/base.js",
+    watch       : './base',
+    env: {
+      "NODE_ENV": "development",
+      "PORT"  : 39001
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+    },
     // First application
     {
-      name      : 'Api',
-      script    : 'api/server.js',
-      env: {
-        COMMON_VARIABLE: 'true'
-      },
-      env_production : {
-        NODE_ENV: 'production'
-      }
+    name        : "api",
+    script      : "./api/server.js",
+    watch       : './api',
+    env: {
+      "NODE_ENV": "development",
+      
     },
+    env_production : {
+       "NODE_ENV": "production"
+    }
 
+  },
+    // First application
     {
-      name      : 'Auth',
-      script    : 'auth/auth-service.js',
-      env: {
-        COMMON_VARIABLE: 'true'
-      },
-      env_production : {
-        NODE_ENV: 'production'
-      }
+    name        : "auth",
+    script      : "./auth/auth-service.js",
+    watch       : './auth',
+    env: {
+      "NODE_ENV": "development",
     },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+
+  },
+    // First application
     {
-      name      : 'User',
-      script    : 'user/user-service-mongo.js',
-      env: {
-        COMMON_VARIABLE: 'true'
-      },
-      env_production : {
-        NODE_ENV: 'production'
-      }
+    name        : "user",
+    script      : "./user/user-service-mongo.js",
+    watch       : './user',
+    env: {
+      "NODE_ENV": "development",
+      
     },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+  },
+    // First application
     {
-      name      : 'Monitor',
-      script    : 'monitor/monitor.js',
-      env: {
-        COMMON_VARIABLE: 'true'
-      },
-      env_production : {
-        NODE_ENV: 'production'
-      }
+    name        : "sms",
+    script      : "./sms/sms-service.js",
+    watch       : './sms',
+    env: {
+      "NODE_ENV": "development",
+      
     },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+  }
     
   ],
 

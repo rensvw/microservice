@@ -18,6 +18,7 @@ seneca
       silent: JSON.parse(SILENT),
       swim: {interval: 1111}
     }
-  });
+  })
+  .listen({type:'tcp',port:9999});
 
 
