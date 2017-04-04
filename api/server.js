@@ -84,12 +84,7 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/update',
       config: {
-        validate: {
-          payload: {
-            email: Joi.string().email().required(),
-            code: Joi.string().min(2).max(200).required()
-          }
-        },
+        
         handler: update,
         auth: {
           mode: 'try'
@@ -199,9 +194,9 @@ const login = (request, reply) => {
 
 const update = (request,reply) => {
   let email = request.payload.email;
-  let code = request.payload.code;
+  let smsCode = request.payload.smsCode;
   server.seneca.act('role:user,cmd:update', {
-    code: code,
+    smsCode: smsCode,
     email: email
   }, function (err, respond){
     return reply(respond);

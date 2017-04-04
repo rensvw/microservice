@@ -5,10 +5,10 @@ const randomID = require('random-id');
 module.exports = function sms(options){
 
     this.add({role:'sms',cmd:'send'}, sendTextMessage);
-    this.add({role:'sms',cmd:'createCode'}, createSMSCode)
+    this.add({role:'sms',cmd:'save',send:'true'}, createSMSCodeAndSendTextMessage)
 
     function sendTextMessage(msg,respond){
-        let message = "test";
+        let message = msg.message;
         let to = msg.to;
         let from = config.sendingNumber;
         client.messages.create({
@@ -25,32 +25,9 @@ module.exports = function sms(options){
         });
     }
 
-    function createSMSCode(msg,respond){
-        let code = randomID(6,'0');
-        let email = msg.email;
-        this.act('role:user,cmd:addSMSCodeToUser',{
-      email:email,
-      code: code
-    },function(err,user){
-      if(err){
-        respond(err,null);
-      }
-      else if(!user){
-        respond(null,{
-          succes: false,
-          message: "User could not be found!"
-        });
-      }
-      else if(user){
-         if(err){
-                respond(err,null);
-            }
-            else{
-                respond;
-            }
-
-      }
-    });
+    function createSMSCodeAndSendTextMessage(msg,respond){
+      
     }
+       
 
 };

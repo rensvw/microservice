@@ -36,72 +36,21 @@ function getUser(msg, respond) {
 }
 
 function updateUser(msg,respond){
-  console.log('testsdfsdfgdfsdg')
-  let email = msg.email;
-  this.act('role:user,cmd:get',{
-    email: email
-  }, function(err,user){
-    if(err){
-      respond(er,null);
-    }
-    if(!user){
-      respond({
-        succes:false,
-        message:'User could not be found!'});
-    }
-    if(user){
-      console.log("HIER ZET IK DE USER,",user);
-      user.email = msg.email || user.email;
-      user.password = msg.password || user.password;
-      user.fullName = msg.fullName || user.fullName;
-      user.countryCode = msg.countryCode || user.countryCode;
-      user.mobilePhoneNumber = msg.mobilePhoneNumber || user.mobilePhoneNumber;
-      user.verified = msg.verified | user.verified;
-      if(msg.code){
-        user.smsCodes.push({
-          code: msg.code,
-          timeCreated: moment()})
-      }
-      user.save$(function(err,user){
-        respond(console.log(user));
-      });
-    }
-  });
-}
-
-function addSMSCodeToUser(msg, respond) {
-  let user = this.make$('user');
-  let email = msg.email;
-  let code = msg.code;
+  var user = this.make$('user');
   user.load$({
-    email: email
-  }, function (err, user) {
-    if (err) {
-      respond(err, null);
+    email: msg.email
+  }, function(err,result){
+    result.data$({
+      smsCode: {
+        code: msg.smsCode,
+        timeCreated: moment()}
+    });
+    result.save$(function(err,user){
+      respond(err,user.data$(false));
+    });
     }
-    if (!user) {
-      respond(err, null);
-    }
-    if (user) {
-      user.smsCodes.push({
-        code: msg.code,
-        timeCreated: moment()
-      });
-      user.save$((err, user) => {
-        if (err) {
-          respond(err, null);
-        }
-        if (user) {
-          respond(err, {
-            message: "Added sms code to SMSCodes table",
-            succes: true,
-            code: code
-          });
-        }
-      });
-    }
-  });
-
+  );
+  
 }
 
 //working
@@ -113,7 +62,7 @@ function createUser(msg, respond) {
   user.countryCode = msg.countryCode;
   user.mobilePhoneNumber = msg.mobilePhoneNumber;
   user.verified = false;
-  user.smsCodes = {};
+  user.smsCode = {};
   user.save$((err, user) => {
     if (err) {
       respond(err, null);
@@ -137,7 +86,7 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
   user.countryCode = msg.countryCode;
   user.mobilePhoneNumber = msg.mobilePhoneNumber;
   user.verified = false;
-  user.smsCodes = {};
+  user.smsCode = {};
   this.act('role:user,cmd:get', {
     email: user.email
   }, function (err, newUser) {
