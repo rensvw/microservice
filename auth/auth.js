@@ -7,7 +7,10 @@ module.exports = function auth(options) {
   //this.add({role:'auth',cmd:'signup',verify:'sms'}, signup);
   //this.add({role:'auth',cmd:'signup',verify:'email'}, signup);     
   this.add({role:'auth',cmd:'authenticate'}, authenticate);
-  this.add({role:'auth',cmd:'authenticate',tfa:'sms'}, authenticateWithTextMessage);
+  this.add({role:'auth',cmd:'authenticate',tfa:'sms'}, authenticateAndSendSMSCode);
+
+  this.add({role:'auth',cmd:'verify',tfa:'sms'}, verifySMSCode);
+  
 
   //working
   function signup(msg, respond) {
@@ -70,7 +73,7 @@ module.exports = function auth(options) {
     });
   }
 
-  function authenticateWithTextMessage(msg, respond) {
+  function authenticateAndSendSMSCode(msg, respond) {
     let email = msg.email;
     let password = msg.password;
     let seneca = this;
@@ -94,20 +97,15 @@ module.exports = function auth(options) {
               message: "Username or password is incorrect!"
             });
           } else if (res) {
-                seneca.act('role:sms,cmd:send', {
+                seneca.act('role:sms,cmd:save,send:true', {
                   email: email,
-                  to: (user.countryCode + user.mobilePhoneNumber)
-                }, function (err) {
+                }, function (err,result) {
                   if (err) {
                     respond(err, null);
                   } else {
-                    respond({
-                      user: {
-                        email: user.email,
-                        fullName: user.fullName,
-                        guid: "GUID",
-                      },
+                    respond(err,{
                       succes: true,
+                      uuid: result.uuid,
                       message: "Username and password is correct, we've send you a code in a text message!"
                     });
                   }
@@ -117,4 +115,9 @@ module.exports = function auth(options) {
           }
         });
       }
+
+      function verifySMSCode(msg,respond){
+
+      }
+
   };

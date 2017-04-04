@@ -79,12 +79,36 @@ server.register(plugins, function (err) {
           }
         }
       }
+    }, {
+      method: 'POST',
+      path: '/login-sms',
+      config: {
+        validate: {
+          payload: {
+            email: Joi.string().email().required(),
+            password: Joi.string().min(2).max(200).required()
+          }
+        },
+        handler: loginWithSMS,
+        auth: {
+          mode: 'try'
+        },
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      }
     },
      {
       method: 'POST',
       path: '/update',
       config: {
-        
+         validate: {
+          payload: {
+            email: Joi.string().email().required()
+          }
+        },
         handler: update,
         auth: {
           mode: 'try'
@@ -177,7 +201,7 @@ const login = (request, reply) => {
   }
   let email = request.payload.email;
   let password = request.payload.password;
-  server.seneca.act('role:auth,cmd:authenticate,tfa:sms', {
+  server.seneca.act('role:auth,cmd:authenticate', {
     password: password,
     email: email
   }, function (err, respond) {
@@ -191,6 +215,29 @@ const login = (request, reply) => {
     }
   });
 };
+
+const loginWithSMS = (request,reply) => {
+if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,tfa:sms', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+}
 
 const update = (request,reply) => {
   let email = request.payload.email;

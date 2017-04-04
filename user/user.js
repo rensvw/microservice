@@ -41,7 +41,7 @@ function updateUserWithSMSCode(msg,respond){
     result.data$({
       smsCode: {
         code: msg.smsCode,
-        timeCreated: moment(),
+        timeCreated: moment().format('LLL'),
         uuid: uuidV4()
       }
     });

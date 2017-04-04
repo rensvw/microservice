@@ -57,6 +57,10 @@ module.exports = function sms(options){
             }
         });
     }
+
+    function verifySMSCode(msg,respond){
+        
+    }
        
 
 };
