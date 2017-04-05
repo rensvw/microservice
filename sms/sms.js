@@ -1,15 +1,18 @@
 const config = require('./config');
 const client = require('twilio')(config.accountSid, config.authToken);
 const randomID = require('random-id');
+var Promise = require('bluebird');
 
 module.exports = function sms(options){
+
+    var act = Promise.promisify(this.act, {context: this});
 
     this.add({role:'sms',cmd:'send'}, sendTextMessage);
     this.add({role:'sms',cmd:'save',send:'true'}, createSMSCodeAndSendTextMessage)
     this.add({role:'sms',cmd:'save',send:'false'}, createSMSCode)
     
     
-    function sendTextMessage(msg,respond){
+    function sendTextMessage(msg, respond) {
         let message = msg.message;
         let to = msg.to;
         let from = config.sendingNumber;
@@ -17,12 +20,13 @@ module.exports = function sms(options){
             body: message,
             to: to,
             from: from
-        }, function(err,data){
-            if(err){
-                respond(err,null);
-            }
-            else{
-                respond({message:"SMS has been send!"});
+        }, function (err, data) {
+            if (err) {
+                respond(err, null);
+            } else {
+                respond({
+                    message: "SMS has been send!"
+                });
             }
         });
     }
@@ -30,61 +34,96 @@ module.exports = function sms(options){
     function createSMSCodeAndSendTextMessage(msg, respond) {
         let smsCode = randomID(6, '0');
         let email = msg.email;
-        this.act('role:user,cmd:update,service:sms', {
-            email: email,
-            code: smsCode
-        }, function (err, user) {
-            if (err) {
-                respond(err, null);
-            }
-            if (user.succes == true) {
-                this.act('role:sms,cmd:send', {
-                    message: smsCode,
-                    to: user.countryCode + user.mobilePhoneNumber
-                }, function (err, result) {
-                    if (err) {
-                        respond(err, null)
-                    } else {
+        act('role:user,cmd:update,service:sms', {
+                email: email,
+                code: smsCode
+            })
+            .then((user) => {
+                if (user.succes) {
+                    act('role:sms,cmd:send', {
+                        message: smsCode,
+                        to: user.countryCode + user.mobilePhoneNumber
+                    }).then((result) => {
                         respond({
                             uuid: user.uuid,
                             message: result.message
                         });
-                    }
-                });
-            }
-            if (user.succes == false) {
-                respond({
-                    message: "Something went wrong while updating the user object!"
-                })
-            }
-        });
-    }
+                    }).catch((err) => {
+                        respond(err, null)
+                    })
+                }
+                if (!user.succes) {
+                    respond({
+                        message: "Something went wrong while updating the user object!"
+                    })
+                }
+            })
+            .catch((err) => {
+                respond(err, null);
+            })
 
-     function createSMSCode(msg, respond) {
+
+    }
+    /*function createSMSCodeAndSendTextMessage(msg, respond) {
         let smsCode = randomID(6, '0');
         let email = msg.email;
-        this.act('role:user,cmd:update,service:sms', {
+        console.log("BEFORE ACT")
+        act('role:user,cmd:update,service:sms', {
             email: email,
             code: smsCode
-        }, function (err, user) {
-            if (err) {
+        }).then(function (user) {
+             console.log("in ACT")
+                if (user.succes == true) {
+                    act('role:sms,cmd:send', {
+                            message: smsCode,
+                            to: user.countryCode + user.mobilePhoneNumber
+                        }).then(function (result) {
+                            respond({
+                                uuid: user.uuid,
+                                message: result.message
+                            });
+                        })
+                        .catch(function (err) {
+                            respond(err, null);
+                        })
+                }
+                if (user.succes == false) {
+                    respond({
+                        message: "Something went wrong while updating the user object!"
+                    })
+                }
+
+            })
+            .catch(function (err) {
                 respond(err, null);
-            }
-            if (user.succes == true) {
-                        respond({
-                            uuid: user.uuid,
-                            message: "SMS Code created!"
-                        });
-                    }
-                
-            
-            if (user.succes == false) {
-                respond({
-                    message: "Something went wrong while updating the user object!"
-                })
-            }
-        });
+            })
+    }*/
+
+
+    function createSMSCode(msg, respond) {
+        let smsCode = randomID(6, '0');
+        let email = msg.email;
+        act('role:user,cmd:update,service:sms', {
+                email: email,
+                code: smsCode
+            })
+            .then((user) => {
+                if (user.succes) {
+                    respond({
+                        uuid: user.uuid,
+                        message: "SMS Code created!"
+                    });
+                }
+                if (!user.succes) {
+                    respond({
+                        message: "Something went wrong while updating the user object!"
+                    })
+                }
+            })
+            .catch((err) => {
+                respond(err, null);
+            });
     }
 
 
-};
+    };
