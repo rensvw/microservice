@@ -53,8 +53,8 @@ server.register(plugins, function (err) {
       method: 'GET',
       path: '/api/',
       config: {
-        description: 'Check if the user is currently logged in!',
-        notes: 'Returns a message with a yessss or noooo',
+        description: 'Checks if the user is currently logged in!',
+        notes: 'Returns auth:yesss if the user is authenticated!',
         tags: ['api'],
         auth: 'session',
         plugins: {
@@ -91,7 +91,7 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/api/login-sms',
       config: {
-        description: 'Login route with sms as two factor authentication',
+        description: 'Login route with sms verification',
         notes: 'Returns a guid if username and password are correct.',
         tags: ['api'],
         validate: {
@@ -114,8 +114,8 @@ server.register(plugins, function (err) {
       method: 'POST',
       path: '/api/verify-sms',
       config: {
-        description: 'Login route with sms as two factor authentication',
-        notes: 'Returns a guid if username and password are correct.',
+        description: 'Verify your sms code when logging in',
+        notes: 'Returns a cookie session if authorised',
         tags: ['api'],
         validate: {
           payload: {
@@ -162,7 +162,7 @@ server.register(plugins, function (err) {
       path: '/api/logout',
       config: {
         description: 'Logout route',
-        notes: 'Returns true if correctly logged out',
+        notes: 'Logs the user out',
         tags: ['api'],
         handler: logout
       }
@@ -315,7 +315,6 @@ const update = (request,reply) => {
     return reply(respond);
   });
 };
-
 
 //Function for logging out!
 const logout = (request, reply) => {
