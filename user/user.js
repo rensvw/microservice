@@ -48,6 +48,7 @@ function getUserByUuid(msg, respond) {
       respond(err, null);
     }
     if (user) {
+      //text
       respond(err, {
         email: user.email,
         password: user.password,
