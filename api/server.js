@@ -180,7 +180,7 @@ server.register(plugins, function (err) {
             password: Joi.string().min(2).max(200).required(),
             fullName: Joi.string().min(2).max(200).required(),
             countryCode: Joi.string().min(2).max(5).required(),
-            mobilePhoneNumber: Joi.number().required()
+            mobilePhoneNumber: Joi.string().min(2).max(15).required()
           }
         },
         handler: signUp,

@@ -108,7 +108,7 @@ module.exports = function auth(options) {
                     respond({
                       succes: true,
                       uuid: result.uuid,
-                      message: "Username and password is correct, we've send you a code in a text message!"
+                      message: "Username and password are correct, we've send you a code in a text message!"
                     });
                   }
                 });
