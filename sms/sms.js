@@ -6,7 +6,8 @@ module.exports = function sms(options){
 
     this.add({role:'sms',cmd:'send'}, sendTextMessage);
     this.add({role:'sms',cmd:'save',send:'true'}, createSMSCodeAndSendTextMessage)
-    this.add({role:'sms',cmd:'verify'}, verifySMSCode);
+    this.add({role:'sms',cmd:'save',send:'false'}, createSMSCode)
+    
     
     function sendTextMessage(msg,respond){
         let message = msg.message;
@@ -31,7 +32,7 @@ module.exports = function sms(options){
         let email = msg.email;
         this.act('role:user,cmd:update,service:sms', {
             email: email,
-            smsCode: smsCode
+            code: smsCode
         }, function (err, user) {
             if (err) {
                 respond(err, null);
@@ -44,7 +45,7 @@ module.exports = function sms(options){
                     if (err) {
                         respond(err, null)
                     } else {
-                        respond(err, {
+                        respond({
                             uuid: user.uuid,
                             message: result.message
                         });
@@ -52,17 +53,38 @@ module.exports = function sms(options){
                 });
             }
             if (user.succes == false) {
-                respond(err, {
+                respond({
                     message: "Something went wrong while updating the user object!"
                 })
             }
         });
     }
 
-    function verifySMSCode(msg,respond){
-        let uuid = msg.uuid;
-        let code = msg.code;
+     function createSMSCode(msg, respond) {
+        let smsCode = randomID(6, '0');
+        let email = msg.email;
+        this.act('role:user,cmd:update,service:sms', {
+            email: email,
+            code: smsCode
+        }, function (err, user) {
+            if (err) {
+                respond(err, null);
+            }
+            if (user.succes == true) {
+                        respond({
+                            uuid: user.uuid,
+                            message: "SMS Code created!"
+                        });
+                    }
+                
+            
+            if (user.succes == false) {
+                respond({
+                    message: "Something went wrong while updating the user object!"
+                })
+            }
+        });
     }
-       
+
 
 };

@@ -48,14 +48,15 @@ function getUserByUuid(msg, respond) {
       respond(err, null);
     }
     if (user) {
-      //text
       respond(err, {
         email: user.email,
         password: user.password,
         fullName: user.fullName,
         countryCode: user.countryCode,
         mobilePhoneNumber: user.mobilePhoneNumber,
-        verified: user.verified
+        verified: user.verified,
+        uuid: user.uuid,
+        smsCodes: user.smsCodes
       });
     }
   });
@@ -66,17 +67,19 @@ function updateUserWithSMSCode(msg,respond){
   user.load$({
     email: msg.email
   }, function(err,result){
-    result.data$({
-      smsCode: {
-        code: msg.smsCode,
+    result.data$(result.smsCodes.push(
+      {
+        code: msg.code,
         timeCreated: moment().format('LLL'),
-        uuid: uuidV4()
-      }
+      })
+    );
+    result.data$({
+      uuid:uuidV4()
     });
     result.save$(function(err,user){
       respond(err,{ succes:true,
       message: "Succesfully added the generated code to the user object!",
-      uuid: user.smsCode.uuid,
+      uuid: user.uuid,
       countryCode: user.countryCode,
       mobilePhoneNumber: user.mobilePhoneNumber});
     });
@@ -93,7 +96,7 @@ function createUser(msg, respond) {
   user.countryCode = msg.countryCode;
   user.mobilePhoneNumber = msg.mobilePhoneNumber;
   user.verified = false;
-  user.smsCode = {};
+  user.smsCodes = [];
   user.save$((err, user) => {
     if (err) {
       respond(err, null);
@@ -117,7 +120,8 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
   user.countryCode = msg.countryCode;
   user.mobilePhoneNumber = msg.mobilePhoneNumber;
   user.verified = false;
-  user.smsCode = {};
+  user.smsCodes = [];
+  user.uuid = null;
   this.act('role:user,cmd:get', {
     email: user.email
   }, function (err, newUser) {

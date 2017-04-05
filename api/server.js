@@ -100,7 +100,30 @@ server.register(plugins, function (err) {
             password: Joi.string().min(2).max(200).required()
           }
         },
-        handler: loginWithSMS,
+        handler: authorizeAndSendSMSCode,
+        auth: {
+          mode: 'try'
+        },
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      }
+    }, {
+      method: 'POST',
+      path: '/api/verify-sms',
+      config: {
+        description: 'Login route with sms as two factor authentication',
+        notes: 'Returns a guid if username and password are correct.',
+        tags: ['api'],
+        validate: {
+          payload: {
+            uuid: Joi.string().required(),
+            code: Joi.string().required()
+          }
+        },
+        handler: verifySMSCodeAndLogin,
         auth: {
           mode: 'try'
         },
@@ -236,8 +259,8 @@ const login = (request, reply) => {
   });
 };
 
-const loginWithSMS = (request,reply) => {
-if (request.auth.isAuthenticated) {
+const authorizeAndSendSMSCode = (request,reply) => {
+  if (request.auth.isAuthenticated) {
     return reply({
       message: "You're already authenticated!"
     });
@@ -258,6 +281,31 @@ if (request.auth.isAuthenticated) {
     }
   });
 }
+
+const verifySMSCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,tfa:sms', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes == true) {
+      request.cookieAuth.set(respond.user);
+      reply({succes:respond.succes,
+      message: respond.message})
+    } else if (respond.succes == false) {
+     reply({succes:respond.succes,
+      message: respond.message})
+    }
+  });
+};
 
 const update = (request,reply) => {
   let email = request.payload.email;
