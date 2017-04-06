@@ -40,6 +40,7 @@
     "seneca-user": "^2.1.0",
     "seneca-web": "^2.0.0",
     "seneca-web-adapter-express": "^1.0.2",
+    "seneca-zipkin-tracer": "^0.1.0",
     "vision": "^4.1.1",
     "wo": "^0.8.0"
   },

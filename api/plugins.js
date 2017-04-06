@@ -62,7 +62,7 @@ var plugins = [{
                 short_logs: true
             }
         })
-        //.use('zipkin-tracer', {sampling:1})
+        .use('zipkin-tracer', {sampling:1})
     }
 }
 ];
