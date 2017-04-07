@@ -43,7 +43,7 @@
     "seneca-mail": "^0.2.2",
     "seneca-mesh": "^0.10.0",
     "seneca-mongo-store": "^1.1.0",
-    "seneca-repl": "^1.0.0",
+    "seneca-repl": "^0.3.0",
     "seneca-user": "^2.1.0",
     "seneca-web": "^2.0.0",
     "seneca-web-adapter-express": "^1.0.2",

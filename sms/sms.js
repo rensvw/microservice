@@ -12,6 +12,7 @@ module.exports = function sms(options){
     this.add({role:'sms',cmd:'save',send:'false'}, createSMSCode)
     
     
+    
     function sendTextMessage(msg, respond) {
         let message = msg.message;
         let to = msg.to;

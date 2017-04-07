@@ -83,6 +83,19 @@ module.exports = {
   },
     // First application
     {
+    name        : "repl",
+    script      : "./repl/repl-service.js",
+    watch       : './repl',
+    env: {
+      "NODE_ENV": "development",
+      
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+  }/*,
+    // First application
+    {
     name        : "email",
     script      : "./email/email-service.js",
     watch       : './email',
@@ -93,7 +106,7 @@ module.exports = {
     env_production : {
        "NODE_ENV": "production"
     }
-  }
+  }*/
     
   ],
 
