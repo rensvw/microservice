@@ -80,6 +80,19 @@ module.exports = {
     env_production : {
        "NODE_ENV": "production"
     }
+  },
+    // First application
+    {
+    name        : "email",
+    script      : "./email/email-service.js",
+    watch       : './email',
+    env: {
+      "NODE_ENV": "development",
+      
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }
   }
     
   ],

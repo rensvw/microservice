@@ -7,7 +7,9 @@ module.exports = function auth(options) {
   var act = Promise.promisify(this.act, {context: this});
 
   const bcrypt = require('bcrypt');
-  const saltRounds = 14;
+  const saltRounds = 10;
+
+  
 
   this.add({role:'auth',cmd:'signup'}, signup);
   //this.add({role:'auth',cmd:'signup',tfa:'sms'}, signupWithSMSVerification);
@@ -15,6 +17,7 @@ module.exports = function auth(options) {
   this.add({role:'auth',cmd:'authenticate'}, authenticate);
   this.add({role:'auth',cmd:'authenticate',tfa:'sms'}, authenticateAndSendSMSCode);
   this.add({role:'auth',cmd:'verify',tfa:'sms'}, verifySMSCode);
+
 
   /*function signupWithSMSVerification(msg,respond){
     let email = msg.email;
@@ -138,7 +141,7 @@ module.exports = function auth(options) {
                 message: "Username or password is incorrect!"
               });
             } else if (res) {
-              act('role:sms,cmd:save,send:false', {
+              act('role:sms,cmd:save,send:true', {
                   email: email,
                 }).then(function (result) {
                   respond({
