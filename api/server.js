@@ -20,7 +20,6 @@ const server = new Hapi.Server();
 
 // add server’s connection information
 server.connection({
-  host: 'localhost',
   port: 3000
 });
 
@@ -250,10 +249,10 @@ const login = (request, reply) => {
   }, function (err, respond) {
     if (err) {
       return reply(Boom.badRequest(respond(err)));
-    } else if (respond.succes == true) {
-      request.cookieAuth.set(respond.user);
+    } else if (respond.succes) {
+      //request.cookieAuth.set(respond.user);
       return reply(respond);
-    } else if (respond.succes == false) {
+    } else if (!respond.succes) {
       return reply(Boom.unauthorized('Username or password is wrong!'));
     }
   });
