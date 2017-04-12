@@ -11,8 +11,6 @@ module.exports = function auth(options) {
   const bcrypt = require('bcrypt');
   const saltRounds = 10;
 
-  
-
   this.add({role:'auth',cmd:'signup'}, signup);     
   this.add({role:'auth',cmd:'authenticate'}, authenticate);
   this.add({role:'auth',cmd:'authenticate',tfa:'sms'}, authenticateAndSendSMSCode);
@@ -21,10 +19,8 @@ module.exports = function auth(options) {
   this.add({role:'auth',cmd:'verify',tfa:'sms'}, verifySMSCode);
   this.add({role:'auth',cmd:'verify',tfa:'email'}, verifyEmailCode);
   
-
   this.add({role:'auth',cmd:'hash'}, hashPassword);
   this.add({role:'auth',cmd:'comparePasswords'}, comparePassword);
-  
   
   //this.add({role:'auth',cmd:'verify',tfa:'email'}, verifyEmailCode);
   
