@@ -1,4 +1,4 @@
-var instances = 3;
+var instances = 1;
 
 module.exports = {
 
