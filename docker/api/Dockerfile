@@ -1,7 +1,7 @@
 FROM shared
 
 ADD server.js .
-ADD api.js .
-EXPOSE 4000
+ADD plugins.js .
+EXPOSE 3000
 
 CMD ["node", "server.js"]

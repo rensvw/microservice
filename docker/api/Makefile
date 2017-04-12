@@ -1,6 +1,6 @@
 container :
 	cp ../../api/server.js .
-	cp ../../api/api.js .
+	cp ../../api/plugins.js .
 	
 	sudo docker build -t api .
 	sudo docker images | grep api

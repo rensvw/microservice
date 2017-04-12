@@ -1,4 +1,7 @@
+var instances = 3;
+
 module.exports = {
+
   /**
    * Application configuration section
    * http://pm2.keymetrics.io/docs/usage/application-declaration/
@@ -7,6 +10,8 @@ module.exports = {
     {
     name        : "base0",
     script      : "./base/base.js",
+    instances : instances,
+    exec_mode : "cluster",
     watch       : './base',
     env: {
       "NODE_ENV": "development",
@@ -20,6 +25,8 @@ module.exports = {
     name        : "base1",
     script      : "./base/base.js",
     watch       : './base',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
       "PORT"  : 39001
@@ -33,6 +40,8 @@ module.exports = {
     name        : "api",
     script      : "./api/server.js",
     watch       : './api',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
       
@@ -47,6 +56,8 @@ module.exports = {
     name        : "auth",
     script      : "./auth/auth-service.js",
     watch       : './auth',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
     },
@@ -60,6 +71,8 @@ module.exports = {
     name        : "user",
     script      : "./user/user-service-mongo.js",
     watch       : './user',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
       
@@ -73,6 +86,8 @@ module.exports = {
     name        : "sms",
     script      : "./sms/sms-service.js",
     watch       : './sms',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
       
@@ -86,6 +101,8 @@ module.exports = {
     name        : "repl",
     script      : "./repl/repl-service.js",
     watch       : './repl',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
       
@@ -93,12 +110,14 @@ module.exports = {
     env_production : {
        "NODE_ENV": "production"
     }
-  }/*,
+  },
     // First application
     {
     name        : "email",
     script      : "./email/email-service.js",
     watch       : './email',
+    instances : instances,
+    exec_mode : "cluster",
     env: {
       "NODE_ENV": "development",
       
@@ -106,7 +125,22 @@ module.exports = {
     env_production : {
        "NODE_ENV": "production"
     }
-  }*/
+  },
+    // First application
+    {
+    name        : "generators",
+    script      : "./generators/generators-service.js",
+    watch       : './generators',
+    instances : instances,
+    exec_mode : "cluster",
+    env: {
+      "NODE_ENV": "development",
+      
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+  }
     
   ],
 
