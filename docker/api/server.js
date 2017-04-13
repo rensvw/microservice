@@ -132,20 +132,43 @@ server.register(plugins, function (err) {
           }
         }
       }
-    },
-     {
+    }, {
       method: 'POST',
-      path: '/api/update',
+      path: '/api/login-email',
       config: {
-        description: 'Updates an user with a new sms code. ONLY FOR DEBUGGING',
-        notes: 'Returns user object',
+        description: 'Login route with email verification',
+        notes: 'Returns a guid if username and password are correct.',
         tags: ['api'],
-         validate: {
+        validate: {
           payload: {
-            email: Joi.string().email().required()
+            email: Joi.string().email().required(),
+            password: Joi.string().min(2).max(200).required()
           }
         },
-        handler: update,
+        handler: authorizeAndSendEmailCode,
+        auth: {
+          mode: 'try'
+        },
+        plugins: {
+          'hapi-auth-cookie': {
+            redirectTo: false
+          }
+        }
+      }
+    }, {
+      method: 'POST',
+      path: '/api/verify-email',
+      config: {
+        description: 'Verify your email code when logging in',
+        notes: 'Returns a cookie session if authorised',
+        tags: ['api'],
+        validate: {
+          payload: {
+            uuid: Joi.string().required(),
+            code: Joi.string().required()
+          }
+        },
+        handler: verifyEmailCodeAndLogin,
         auth: {
           mode: 'try'
         },
@@ -249,10 +272,10 @@ const login = (request, reply) => {
   }, function (err, respond) {
     if (err) {
       return reply(Boom.badRequest(respond(err)));
-    } else if (respond.succes == true) {
-      request.cookieAuth.set(respond.user);
+    } else if (respond.succes) {
+      //request.cookieAuth.set(respond.user);
       return reply(respond);
-    } else if (respond.succes == false) {
+    } else if (!respond.succes) {
       return reply(Boom.unauthorized('Username or password is wrong!'));
     }
   });
@@ -306,15 +329,6 @@ const verifySMSCodeAndLogin = (request, reply) => {
   });
 };
 
-const update = (request,reply) => {
-  let email = request.payload.email;
-  server.seneca.act('role:sms,cmd:save,send:true', {
-    email: email
-  }, function (err, respond){
-    return reply(respond);
-  });
-};
-
 //Function for logging out!
 const logout = (request, reply) => {
   request.cookieAuth.clear();
@@ -339,6 +353,54 @@ const signUp = (request, reply) => {
       return reply(Boom.badRequest(respond(err, null)));
     } else {
       return reply(respond);
+    }
+  });
+};
+
+const authorizeAndSendEmailCode = (request,reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,tfa:email', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+}
+
+const verifyEmailCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,tfa:email', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes == true) {
+      request.cookieAuth.set(respond.user);
+      reply({succes:respond.succes,
+      message: respond.message})
+    } else if (respond.succes == false) {
+     reply({succes:respond.succes,
+      message: respond.message})
     }
   });
 };

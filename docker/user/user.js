@@ -8,8 +8,8 @@ this.add({role:'user',cmd:'create'}, createUser);
 this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
 this.add({'role':'user','cmd':'get'}, getUser);
 this.add({'role':'user','cmd':'get','param':'uuid'}, getUserByUuid);
+this.add({'role':'user','cmd':'update','service':'2fa'}, updateUserWithCode);
 
-this.add({'role':'user','cmd':'update','service':'sms'}, updateUserWithSMSCode);
 
 function getUser(msg, respond) {
   var user = this.make$('user');
@@ -21,16 +21,23 @@ function getUser(msg, respond) {
       respond(err, null);
     }
     if (!user) {
-      respond(err, null);
+      respond({
+        succes: false,
+        message: "User could not be found!"
+      });
     }
     if (user) {
       respond(err, {
+        succes: true,
         email: user.email,
         password: user.password,
         fullName: user.fullName,
         countryCode: user.countryCode,
         mobilePhoneNumber: user.mobilePhoneNumber,
-        verified: user.verified
+        verified: user.verified,
+        uuid: user.uuid,
+        smsCodes: user.smsCodes,
+        emailCodes: user.emailCodes
       });
     }
   });
@@ -46,7 +53,10 @@ function getUserByUuid(msg, respond) {
       respond(err, null);
     }
     if (!user) {
-      respond(err, null);
+      respond({
+        succes: false,
+        message: "User could not be found!"
+      });
     }
     if (user) {
       respond(err, {
@@ -57,32 +67,65 @@ function getUserByUuid(msg, respond) {
         mobilePhoneNumber: user.mobilePhoneNumber,
         verified: user.verified,
         uuid: user.uuid,
-        smsCodes: user.smsCodes
+        smsCodes: user.smsCodes,
+        emailCodes: user.emailCodes
       });
     }
   });
 }
 
-function updateUserWithSMSCode(msg,respond){
+
+function updateUserWithCode(msg,respond){
   var user = this.make$('user');
   user.load$({
     email: msg.email
   }, function(err,result){
-    result.data$(result.smsCodes.push(
-      {
-        code: msg.code,
-        timeCreated: moment().format('LLL'),
-      })
-    );
+    if (!result) {
+      respond({
+        succes: false,
+        message: "User could not be found!"
+      });
+    }
+    if(msg.type=='email'){
+      result.data$(result.emailCodes.push(
+        {
+          code: msg.code,
+          timeCreated: moment().format('LLL'),
+        })
+      );
+    }
+    else if (msg.type=='sms'){
+      result.data$(result.smsCodes.push(
+        {
+          code: msg.code,
+          timeCreated: moment().format('LLL'),
+        })
+      );
+
+    }
     result.data$({
       uuid:uuidV4()
     });
     result.save$(function(err,user){
-      respond(err,{ succes:true,
-      message: "Succesfully added the generated code to the user object!",
-      uuid: user.uuid,
-      countryCode: user.countryCode,
-      mobilePhoneNumber: user.mobilePhoneNumber});
+      if(msg.type=='sms'){
+        respond(err,{ succes:true,
+          message: "Succesfully added the generated code to the user object!",
+          uuid: user.uuid,
+          code: user.smsCodes[user.smsCodes.length-1].code,
+          fullName: user.fullName,
+          countryCode: user.countryCode,
+          mobilePhoneNumber: user.mobilePhoneNumber});
+      }
+      else{
+         respond(err,{ succes:true,
+          message: "Succesfully added the generated code to the user object!",
+          uuid: user.uuid,
+          code: user.emailCodes[user.emailCodes.length-1].code,
+          fullName: user.fullName,
+          countryCode: user.countryCode,
+          mobilePhoneNumber: user.mobilePhoneNumber});
+      }
+      
     });
     }
   );
@@ -91,13 +134,15 @@ function updateUserWithSMSCode(msg,respond){
 //working
 function createUser(msg, respond) {
   var user = this.make$('user');
-  user.email = msg.email;
-  user.fullName = msg.fullName;
+{  user.email = msg.email;
+  user.fullName = msg.fullName;}
   user.password = msg.password;
   user.countryCode = msg.countryCode;
   user.mobilePhoneNumber = msg.mobilePhoneNumber;
   user.verified = false;
   user.smsCodes = [];
+  user.emailCodes = [];
+  user.uuid = null;
   user.save$((err, user) => {
     if (err) {
       respond(err, null);
@@ -123,17 +168,18 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
   user.verified = false;
   user.smsCodes = [];
   user.uuid = null;
+  user.emailCodes = [];
   this.act('role:user,cmd:get', {
     email: user.email
   }, function (err, newUser) {
     if (err) {
       respond(err, null);
-    } else if (newUser) {
+    } else if (newUser.succes) {
       respond(null, {
         succes: false,
         message: "Email does already exist!"
       });
-    } else if (!newUser) {
+    } else if (!newUser.succes) {
       user.save$((err, user) => {
         if (err) {
           respond(err, null);

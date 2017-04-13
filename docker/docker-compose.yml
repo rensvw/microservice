@@ -13,7 +13,6 @@ services:
       HOST: base0
       BASES: base0:39000,base1:39001
       SILENT: 'false'
-    container_name: base0
     networks:
       securitypoc:
         aliases: 
@@ -29,7 +28,6 @@ services:
       HOST: base1
       BASES: base0:39000,base1:39001
       SILENT: 'false'
-    container_name: base1
     networks:
       securitypoc:
         aliases: 
@@ -39,7 +37,7 @@ services:
   api:
     image: api
     environment:
-      HOST: 'api'
+      HOST: 'eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     ports:
@@ -48,16 +46,14 @@ services:
       - securitypoc
     deploy:
       replicas: 1
-    container_name: api
   user:
     image: user
     environment:
-      HOST: ' user'
+      HOST: ' eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     ports:
       - '57439:57439'
-    container_name: user
     networks:
       - securitypoc
     deploy:
@@ -65,23 +61,32 @@ services:
   auth:
     image: auth
     environment:
-      HOST: 'auth'
+      HOST: 'eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     networks:
-      - securitypoc
-    container_name: auth
+      - securitypocdocker 
     deploy:
       replicas: 1
   repl:
     image: repl
     environment:
-      HOST: 'repl'
+      REPL_HOST: 0.0.0.0
+      HOST: '@eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
-    container_name: repl
     ports:
       - '10001:10001'
+    networks:
+      - securitypoc
+    deploy:
+      replicas: 1
+  generators:
+    image: generators
+    environment:
+      HOST: 'eth0'
+      BASES: base0:39000,base1:39001
+      SILENT: 'false'
     networks:
       - securitypoc
     deploy:
@@ -89,10 +94,9 @@ services:
   email:
     image: email
     environment:
-      HOST: 'email'
+      HOST: 'eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
-    container_name: email
     networks:
       - securitypoc
     deploy:
@@ -100,10 +104,9 @@ services:
   sms:
     image: sms
     environment:
-      HOST: 'sms'
+      HOST: 'eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
-    container_name: sms
     networks:
       - securitypoc
     deploy:
