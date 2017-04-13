@@ -65,7 +65,7 @@ services:
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     networks:
-      - securitypocdocker 
+      - securitypoc 
     deploy:
       replicas: 1
   repl:
