@@ -37,7 +37,7 @@ services:
   api:
     image: api
     environment:
-      HOST: 'docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     ports:
@@ -49,7 +49,7 @@ services:
   user:
     image: user
     environment:
-      HOST: ' docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     ports:
@@ -61,7 +61,7 @@ services:
   auth:
     image: auth
     environment:
-      HOST: 'docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     networks:
@@ -72,7 +72,7 @@ services:
     image: repl
     environment:
       REPL_HOST: 0.0.0.0
-      HOST: '@docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     ports:
@@ -84,7 +84,7 @@ services:
   generators:
     image: generators
     environment:
-      HOST: 'docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     networks:
@@ -94,7 +94,7 @@ services:
   email:
     image: email
     environment:
-      HOST: 'docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     networks:
@@ -104,7 +104,7 @@ services:
   sms:
     image: sms
     environment:
-      HOST: 'docker_gwbridge'
+      HOST: '192.168.99.100'
       BASES: base0:39000,base1:39001
       SILENT: 'false'
     networks:
