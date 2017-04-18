@@ -4,7 +4,7 @@ var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:
 var SILENT = process.env.SILENT || process.argv[4] || 'true';
 
 const Chairo = require('chairo');
-const Seneca = require('seneca');
+const Seneca = require('seneca')();
 const tag = 'api';
 const Joi = require('joi');
 const Hapi = require('hapi');
@@ -232,18 +232,7 @@ server.register(plugins, function (err) {
   });
 });
 
-// Set up mesh network
-server.seneca
-  .use('mesh', {
-    host: HOST,
-    bases: BASES,
-    sneeze: {
-      silent: JSON.parse(SILENT),
-      swim: {
-        interval: 1111
-      }
-    }
-  });
+
 
 // Tests if user is logged in!
 const testAuth = (request, reply) => {
@@ -404,3 +393,17 @@ const verifyEmailCodeAndLogin = (request, reply) => {
     }
   });
 };
+
+
+// Set up mesh network
+seneca
+  .use('mesh', {
+    host: HOST,
+    bases: BASES,
+    sneeze: {
+      silent: JSON.parse(SILENT),
+      swim: {
+        interval: 1111
+      }
+    }
+  });

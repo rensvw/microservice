@@ -14,6 +14,22 @@ const Bcrypt = require('bcrypt');
 const CookieAuth = require('hapi-auth-cookie');
 
 
+var Good = require('good')
+var Vision = require('vision')
+
+const Inert = require('inert');
+
+const HapiSwagger = require('hapi-swagger');
+
+
+const options = {
+    info: {
+            'title': 'SecurityPoC API Documentation',
+            'version': '1',
+        }
+    };
+
+
 // create new server instance
 const server = new Hapi.Server();
 
@@ -26,7 +42,54 @@ server.connection({
 // register plugins to server instance
 const plugins = require('./plugins');
 
-server.register(plugins, function (err) {
+server.register([{
+   register: Inert
+},
+  {
+    register: Vision
+  },
+  {
+        register: HapiSwagger,
+        options: options
+    },
+  {
+    register: Good,
+    options: {
+      ops: {
+        interval: 10000
+      },
+      reporters: {
+        console: [
+          {
+            module: 'good-squeeze',
+            name: 'Squeeze',
+            args: [ { log: '*', response: '*', request: '*' } ]
+          },
+          {
+            module: 'good-console'
+          },
+          'stdout'
+        ]
+      }
+    }
+  },
+  {
+    register: CookieAuth
+  },
+  { register: Chairo,
+    options: {
+        seneca: Seneca({
+            tag: tag,
+            internal: {
+                logger: require('seneca-demo-logger')
+            },
+            debug: {
+                short_logs: true
+            }
+        })
+        .use('zipkin-tracer', {sampling:1})
+    }
+}], function (err) {
   if (err) {
     server.log('error', 'failed to install plugins');
     throw err;
@@ -232,18 +295,7 @@ server.register(plugins, function (err) {
   });
 });
 
-// Set up mesh network
-server.seneca
-  .use('mesh', {
-    host: HOST,
-    bases: BASES,
-    sneeze: {
-      silent: JSON.parse(SILENT),
-      swim: {
-        interval: 1111
-      }
-    }
-  });
+
 
 // Tests if user is logged in!
 const testAuth = (request, reply) => {
@@ -404,3 +456,17 @@ const verifyEmailCodeAndLogin = (request, reply) => {
     }
   });
 };
+
+
+// Set up mesh network
+server.seneca
+  .use('mesh', {
+    host: HOST,
+    bases: BASES,
+    sneeze: {
+      silent: JSON.parse(SILENT),
+      swim: {
+        interval: 1111
+      }
+    }
+  });
