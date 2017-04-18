@@ -13,6 +13,7 @@ const Handlebars = require('handlebars');
 const Boom = require('boom');
 const Bcrypt = require('bcrypt');
 const CookieAuth = require('hapi-auth-cookie');
+const Rif = require('rif')
 
 
 var Good = require('good')
