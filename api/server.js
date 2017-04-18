@@ -89,6 +89,27 @@ server.register([{
         })
         .use('zipkin-tracer', {sampling:1})
     }
+},{
+  register: require('wo'),
+  options:{
+    bases: BASES,
+    route: [
+        {path: '/api/', method: 'get'},      
+        {path: '/api/login', method: 'post'},
+        {path: '/api/login-email', method: 'post'},
+        {path: '/api/login-sms', method: 'post'},
+        {path: '/api/logout', method: 'get'},
+        {path: '/api/signup', method: 'post'},
+        {path: '/api/verify-email}', method: 'post'},
+        {path: '/api/verify-sms}', method: 'post'},
+        
+    ],
+    sneeze: {
+      host: HOST,
+      silent: JSON.parse(SILENT),
+      swim: {interval: 1111}
+    }
+  }
 }], function (err) {
   if (err) {
     server.log('error', 'failed to install plugins');
@@ -283,6 +304,20 @@ server.register([{
 
   server.log('info', 'Routes registered');
 
+
+// Set up mesh network
+server.seneca
+  .use('mesh', {
+    host: HOST,
+    bases: BASES,
+    sneeze: {
+      silent: JSON.parse(SILENT),
+      swim: {
+        interval: 1111
+      }
+    }
+  });
+
   // start your server after plugin registration
   server.start(function (err) {
     if (err) {
@@ -457,16 +492,3 @@ const verifyEmailCodeAndLogin = (request, reply) => {
   });
 };
 
-
-// Set up mesh network
-server.seneca
-  .use('mesh', {
-    host: HOST,
-    bases: BASES,
-    sneeze: {
-      silent: JSON.parse(SILENT),
-      swim: {
-        interval: 1111
-      }
-    }
-  });
