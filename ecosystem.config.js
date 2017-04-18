@@ -140,7 +140,22 @@ module.exports = {
     env_production : {
        "NODE_ENV": "production"
     }
-  }
+    
+  },
+    // First application
+    {
+    name        : "hashing",
+    script      : "./hashing/hashing-service.js",
+    watch       : './hashing',
+    instances : instances,
+    exec_mode : "cluster",
+    env: {
+      "NODE_ENV": "development",
+      
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }}
     
   ],
 
