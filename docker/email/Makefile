@@ -5,7 +5,7 @@ container :
 	sudo docker images | grep email
 
 run-single :
-	sudo docker service create --replicas 1 --network securitypoc  --name email -e HOST=eth0 -e BASES=base0:39000,base1:39000 email
+	sudo docker service create --replicas 1 --network securitypoc  --name email -e HOST=@eth0 -e BASES=base0:39000,base1:39001 email
 
 rm-single :
 	sudo docker service rm email

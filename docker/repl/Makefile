@@ -4,7 +4,7 @@ container :
 	sudo docker images | grep repl
 
 run-single :
-	sudo docker service create --replicas 1 --network securitypoc  --name repl -e HOST=eth0 -e BASES=base0:39000,base1:39000 repl
+	sudo docker service create --replicas 1 --network securitypoc  --name repl -e HOST=@eth0 -e BASES=base0:39000,base1:39001 repl
 
 rm-single :
 	sudo docker service rm repl

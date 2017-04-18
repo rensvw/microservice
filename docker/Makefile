@@ -8,5 +8,7 @@ containers :
 	$(MAKE) -C repl container
 	$(MAKE) -C email container
 	$(MAKE) -C generators container
+	$(MAKE) -C hashing container
+	
 
 .PHONY : containers

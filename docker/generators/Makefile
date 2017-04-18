@@ -5,7 +5,7 @@ container :
 	sudo docker images | grep generators
 
 run-single :
-	sudo docker service create --replicas 1 --network securitypoc  --name generators -e HOST=generators -e BASES=base0:39000,base1:39000 generators
+	sudo docker service create --replicas 1 --network securitypoc  --name generators -e HOST=@eth0 -e BASES=base0:39000,base1:39001 generators
 
 rm-single :
 	sudo docker service rm generators

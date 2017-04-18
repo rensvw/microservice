@@ -6,7 +6,7 @@ container :
 	sudo docker images | grep api
 
 run-single :
-	sudo docker service create --replicas 1 --network securitypoc  --name api -e HOST=eth0 -e BASES=base0:39000,base1:39000 api
+	sudo docker service create --replicas 1 --network securitypoc  --name api -e HOST=@eth0 -e BASES=base0:39000,base1:39001 api
 
 rm-single :
 	sudo docker service rm api

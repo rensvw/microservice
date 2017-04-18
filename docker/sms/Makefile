@@ -6,7 +6,7 @@ container :
 	sudo docker images | grep sms
 
 run-single :
-	sudo docker service create --replicas 1 --network securitypoc  --name sms -e HOST=eth0 -e BASES=base0:39000,base1:39000 sms
+	sudo docker service create --replicas 1 --network securitypoc  --name sms -e HOST=@eth0 -e BASES=base0:39000,base1:39001 sms
 
 rm-single :
 	sudo docker service rm sms

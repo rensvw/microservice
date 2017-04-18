@@ -1,12 +1,15 @@
 container :
 	cp ../../auth/auth.js .
+	cp ../../auth/auth-sms.js .
+	cp ../../auth/auth-email.js .
+	
 	cp ../../auth/auth-service.js .
 	
 	sudo docker build -t auth .
 	sudo docker images | grep auth
 
 run-single :
-	sudo docker service create --replicas 1 --network securitypoc  --name auth -e HOST=auth -e BASES=base0:39000,base1:39000 auth
+	sudo docker service create --replicas 1 --network securitypoc  --name auth -e HOST=@eth0 -e BASES=base0:39000,base1:39001 auth
 
 rm-single :
 	sudo docker service rm auth
