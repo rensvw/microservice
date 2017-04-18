@@ -1,11 +1,12 @@
-var PORT = process.env.PORT || process.argv[2] || 3000;
-var HOST = process.env.HOST || process.argv[2] || '127.0.0.1';
-var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
-var SILENT = process.env.SILENT || process.argv[4] || 'true';
+"use strict"
+
+var PORT = process.env.PORT || process.argv[2] || 3000
+var HOST = process.env.HOST || process.argv[3] || '127.0.0.1'
+var BASES = (process.env.BASES || process.argv[4] || '').split(',')
+var SILENT = process.env.SILENT || process.argv[5] || 'true'
 
 const Chairo = require('chairo');
 const Seneca = require('seneca');
-const tag = 'api';
 const Joi = require('joi');
 const Hapi = require('hapi');
 const Handlebars = require('handlebars');
@@ -21,36 +22,52 @@ const Inert = require('inert');
 
 const HapiSwagger = require('hapi-swagger');
 
+const options = {
+    info: {
+            'title': 'SecurityPoC API Documentation',
+            'version': '1',
+        }
+    };
 
 
+var tag = 'api'
 
-
-// create new server instance
-const server = new Hapi.Server();
+var server = new Hapi.Server()
 var rif = Rif()
 
 
 var host = rif(HOST) || HOST
 
-// add server’s connection information
+
 server.connection({
-  port: 3000,
-  host: host
-});
+    port: PORT,
+    host: host
+})
 
-// register plugins to server instance
-const plugins = require('./plugins');
 
-server.register([,
-  {
-    register: Vision
-  },
-  {
+server.register({
+  register: Chairo,
+  options:{
+    seneca: Seneca({
+      tag: tag,
+      internal: {logger: require('seneca-demo-logger')},
+      debug: {short_logs:true}
+    })
+    //.use('zipkin-tracer', {sampling:1})
+  }
+})
+
+server.register({
+   register: Inert
+})
+
+server.register({
         register: HapiSwagger,
         options: options
-    },
-  {
-    register: Good,
+    })
+
+server.register({
+   register: Good,
     options: {
       ops: {
         interval: 10000
@@ -69,24 +86,14 @@ server.register([,
         ]
       }
     }
-  },
-  {
-    register: CookieAuth
-  },
-  { register: Chairo,
-    options: {
-        seneca: Seneca({
-            tag: tag,
-            internal: {
-                logger: require('seneca-demo-logger')
-            },
-            debug: {
-                short_logs: true
-            }
-        })
-        .use('zipkin-tracer', {sampling:1})
-    }
-},{
+})
+
+server.register({
+   register: CookieAuth
+})
+
+
+server.register({
   register: require('wo'),
   options:{
     bases: BASES,
@@ -107,16 +114,9 @@ server.register([,
       swim: {interval: 1111}
     }
   }
-}], function (err) {
-  if (err) {
-    server.log('error', 'failed to install plugins');
-    throw err;
-  }
+})
 
-  server.log('info', 'Plugins registered');
-
-  // Set authentication strategy
-  server.auth.strategy('session', 'cookie', true, {
+ server.auth.strategy('session', 'cookie', true, {
     password: 'worldofwalmartsdgjsdfjgksdgfjksdfhjksdfhsdjksdfjsdhkshdfjkl', // cookie secret
     cookie: 'session', // Cookie name
     redirectTo: false, // Let's handle our own redirections
@@ -125,11 +125,169 @@ server.register([,
     //validateFunc: validation
 
   });
+// Tests if user is logged in!
+const testAuth = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      auth: 'yessss'
+    });
+  }
+  return reply({
+    auth: 'nooooo'
+  });
+}
 
-  server.log('info', 'Registered auth strategy: cookie auth')
+// Function for logging in!
+const login = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes) {
+      //request.cookieAuth.set(respond.user);
+      return reply(respond);
+    } else if (!respond.succes) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+};
 
-  // Routes
-  server.route([{
+const authorizeAndSendSMSCode = (request,reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,tfa:sms', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+}
+
+const verifySMSCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,tfa:sms', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes == true) {
+      request.cookieAuth.set(respond.user);
+      reply({succes:respond.succes,
+      message: respond.message})
+    } else if (respond.succes == false) {
+     reply({succes:respond.succes,
+      message: respond.message})
+    }
+  });
+};
+
+//Function for logging out!
+const logout = (request, reply) => {
+  request.cookieAuth.clear();
+  return reply('You are logged out!');
+}
+
+// Function for registering!
+const signUp = (request, reply) => {
+  let email = request.payload.email;
+  let fullName = request.payload.fullName;
+  let password = request.payload.password;
+  let countryCode = request.payload.countryCode;
+  let mobilePhoneNumber = request.payload.mobilePhoneNumber;
+  server.seneca.act('role:auth,cmd:signup', {
+    email: email,
+    fullName: fullName,
+    password: password,
+    countryCode: countryCode,
+    mobilePhoneNumber: mobilePhoneNumber
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err, null)));
+    } else {
+      return reply(respond);
+    }
+  });
+};
+
+const authorizeAndSendEmailCode = (request,reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,tfa:email', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+}
+
+const verifyEmailCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,tfa:email', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes == true) {
+      request.cookieAuth.set(respond.user);
+      reply({succes:respond.succes,
+      message: respond.message})
+    } else if (respond.succes == false) {
+     reply({succes:respond.succes,
+      message: respond.message})
+    }
+  });
+};
+
+
+
+server.route([{
       method: 'GET',
       path: '/api/',
       config: {
@@ -301,31 +459,18 @@ server.register([,
 
   server.log('info', 'Routes registered');
 
-
-// Set up mesh network
 server.seneca
-  .use('mesh', {
-    host: host,
-    bases: BASES,
-    sneeze: {
-      silent: JSON.parse(SILENT),
-      swim: {
-        interval: 1111
-      }
-    }
-  });
-
-  // start your server after plugin registration
-  server.start(function (err) {
-    if (err) {
-      server.log('error', 'failed to start server')
-      server.log('error', err);
-
-      throw err
-    }
-    server.log('info', 'Server running at: ' + server.info.uri)
-  });
-});
+    .use('mesh',{
+	host: host,
+	bases: BASES,
+	sneeze: {
+          silent: JSON.parse(SILENT),
+          swim: {interval: 1111}
+        }
+    })
 
 
+server.start(function(){
+  console.log(tag,server.info.host,server.info.port)
+})
 
