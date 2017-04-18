@@ -32,11 +32,15 @@ const options = {
 
 // create new server instance
 const server = new Hapi.Server();
+var rif = Rif()
 
+
+var host = rif(HOST) || HOST
 
 // add server’s connection information
 server.connection({
-  port: 3000
+  port: 3000,
+  host: host
 });
 
 // register plugins to server instance
@@ -105,7 +109,7 @@ server.register([{
         
     ],
     sneeze: {
-      host: HOST,
+      host: host,
       silent: JSON.parse(SILENT),
       swim: {interval: 1111}
     }
@@ -308,7 +312,7 @@ server.register([{
 // Set up mesh network
 server.seneca
   .use('mesh', {
-    host: HOST,
+    host: host,
     bases: BASES,
     sneeze: {
       silent: JSON.parse(SILENT),
