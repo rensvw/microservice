@@ -1,6 +1,7 @@
 container :
 	cp ../../user/user-service-mongo.js .
 	cp ../../user/user.js .	
+	
 	sudo docker build -t user .
 	sudo docker images | grep user
 

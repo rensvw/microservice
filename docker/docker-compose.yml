@@ -52,6 +52,8 @@ services:
       HOST: ' @eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'true'
+    ports:
+      - 57439:57439
     networks:
       - securitypoc
     deploy:
