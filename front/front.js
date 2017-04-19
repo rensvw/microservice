@@ -25,7 +25,7 @@ server.register({
   register: require('wo'),
   options: {
     bases: BASES,
-      sneeze: {
+    sneeze: {
 	host: host,
 	silent: JSON.parse(SILENT),
         swim: {interval: 1111}

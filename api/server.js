@@ -15,8 +15,8 @@ const CookieAuth = require('hapi-auth-cookie');
 const Rif = require('rif');
 const Inert = require('inert');
 const HapiSwagger = require('hapi-swagger');
-var Good = require('good')
-var Vision = require('vision')
+var Good = require('good');
+var Vision = require('vision');
 
 const options = {
     info: {
@@ -39,7 +39,6 @@ server.connection({
 });
 
 // register plugins to server instance
-
 
 server.register([
   {
@@ -102,8 +101,8 @@ server.register([
         {path: '/api/login-sms', method: 'post'},
         {path: '/api/logout', method: 'get'},
         {path: '/api/signup', method: 'post'},
-        {path: '/api/verify-email}', method: 'post'},
-        {path: '/api/verify-sms}', method: 'post'},
+        {path: '/api/verify-email', method: 'post'},
+        {path: '/api/verify-sms', method: 'post'},
         
     ],
     sneeze: {
@@ -162,7 +161,7 @@ const login = (request, reply) => {
     if (err) {
       return reply(Boom.badRequest(respond(err)));
     } else if (respond.succes) {
-      //request.cookieAuth.set(respond.user);
+      request.cookieAuth.set(respond.user);
       return reply(respond);
     } else if (!respond.succes) {
       return reply(Boom.unauthorized('Username or password is wrong!'));
