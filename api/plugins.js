@@ -6,8 +6,12 @@ var Good = require('good')
 var Vision = require('vision')
 var CookieAuth = require('hapi-auth-cookie')
 const Inert = require('inert');
-
+const wo = require('wo');
 const HapiSwagger = require('hapi-swagger');
+var PORT = process.env.PORT || process.argv[2] || 0;
+var HOST = process.env.HOST || process.argv[2] || '127.0.0.1';
+var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
+var SILENT = process.env.SILENT || process.argv[4] || 'true';
 
 
 const options = {
@@ -17,9 +21,7 @@ const options = {
         }
     };
 
-var plugins = [{
-   register: Inert
-},
+var plugins = [
   {
     register: Vision
   },
@@ -64,7 +66,28 @@ var plugins = [{
         })
         .use('zipkin-tracer', {sampling:1})
     }
-}
-];
+},{
+  register: require('wo'),
+  options:{
+    bases: BASES,
+    route: [
+        {path: '/api/', method: 'get'},      
+        {path: '/documentation', method: 'get'},   
+        {path: '/api/login', method: 'post'},
+        {path: '/api/login-email', method: 'post'},
+        {path: '/api/login-sms', method: 'post'},
+        {path: '/api/logout', method: 'get'},
+        {path: '/api/signup', method: 'post'},
+        {path: '/api/verify-email}', method: 'post'},
+        {path: '/api/verify-sms}', method: 'post'},
+        
+    ],
+    sneeze: {
+      host: host,
+      silent: JSON.parse(SILENT),
+      swim: {interval: 1111}
+    }
+  }
+}];
 
 module.exports = plugins;

@@ -38,7 +38,7 @@ module.exports = {
     // First application
     {
     name        : "api",
-    script      : "./api/server3.js",
+    script      : "./api/server.js",
     watch       : './api',
     instances : instances,
     exec_mode : "cluster",
@@ -155,7 +155,23 @@ module.exports = {
     },
     env_production : {
        "NODE_ENV": "production"
-    }}
+    },
+  },
+    // First application
+    {
+    name        : "front",
+    script      : "./front/front.js",
+    watch       : './front',
+    instances : instances,
+    exec_mode : "cluster",
+    env: {
+      "NODE_ENV": "development",
+      
+    },
+    env_production : {
+       "NODE_ENV": "production"
+    }
+  }
     
   ],
 

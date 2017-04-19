@@ -1,4 +1,4 @@
-var PORT = process.env.PORT || process.argv[2] || 0;
+var PORT = process.env.PORT || process.argv[2] || 3000;
 var HOST = process.env.HOST || process.argv[2] || '127.0.0.1';
 var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
 var SILENT = process.env.SILENT || process.argv[4] || 'true';
@@ -12,15 +12,12 @@ const Handlebars = require('handlebars');
 const Boom = require('boom');
 const Bcrypt = require('bcrypt');
 const CookieAuth = require('hapi-auth-cookie');
-const Rif = require('rif)')
+const Rif = require('rif');
+const Inert = require('inert');
+const HapiSwagger = require('hapi-swagger');
 
 var Good = require('good')
 var Vision = require('vision')
-
-const Inert = require('inert');
-
-const HapiSwagger = require('hapi-swagger');
-
 
 const options = {
     info: {
@@ -43,16 +40,20 @@ server.connection({
 });
 
 // register plugins to server instance
-const plugins = require('./plugins');
 
-server.register([,
+
+server.register([
   {
-    register: Vision
+    register: Inert
   },
-  {
+    {
+      register: Vision
+    },
+    {
         register: HapiSwagger,
         options: options
     },
+ 
   {
     register: Good,
     options: {
@@ -132,6 +133,167 @@ server.register([,
   });
 
   server.log('info', 'Registered auth strategy: cookie auth')
+
+
+// Tests if user is logged in!
+const testAuth = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      auth: 'yessss'
+    });
+  }
+  return reply({
+    auth: 'nooooo'
+  });
+}
+
+// Function for logging in!
+const login = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes) {
+      //request.cookieAuth.set(respond.user);
+      return reply(respond);
+    } else if (!respond.succes) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+};
+
+const authorizeAndSendSMSCode = (request,reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,tfa:sms', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+}
+
+const verifySMSCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,tfa:sms', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes == true) {
+      request.cookieAuth.set(respond.user);
+      reply({succes:respond.succes,
+      message: respond.message})
+    } else if (respond.succes == false) {
+     reply({succes:respond.succes,
+      message: respond.message})
+    }
+  });
+};
+
+//Function for logging out!
+const logout = (request, reply) => {
+  request.cookieAuth.clear();
+  return reply('You are logged out!');
+}
+
+// Function for registering!
+const signUp = (request, reply) => {
+  let email = request.payload.email;
+  let fullName = request.payload.fullName;
+  let password = request.payload.password;
+  let countryCode = request.payload.countryCode;
+  let mobilePhoneNumber = request.payload.mobilePhoneNumber;
+  server.seneca.act('role:auth,cmd:signup', {
+    email: email,
+    fullName: fullName,
+    password: password,
+    countryCode: countryCode,
+    mobilePhoneNumber: mobilePhoneNumber
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err, null)));
+    } else {
+      return reply(respond);
+    }
+  });
+};
+
+const authorizeAndSendEmailCode = (request,reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,tfa:email', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong!'));
+    }
+  });
+}
+
+const verifyEmailCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,tfa:email', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes == true) {
+      request.cookieAuth.set(respond.user);
+      reply({succes:respond.succes,
+      message: respond.message})
+    } else if (respond.succes == false) {
+     reply({succes:respond.succes,
+      message: respond.message})
+    }
+  });
+};
 
   // Routes
   server.route([{
