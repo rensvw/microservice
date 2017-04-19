@@ -37,7 +37,7 @@ services:
   api:
     image: api
     environment:
-      HOST: '@eth0'
+      HOST: 'eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'true'
     ports:
