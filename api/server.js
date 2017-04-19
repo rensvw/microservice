@@ -15,9 +15,8 @@ const CookieAuth = require('hapi-auth-cookie');
 const Rif = require('rif');
 const Inert = require('inert');
 const HapiSwagger = require('hapi-swagger');
-
-var Good = require('good')
-var Vision = require('vision')
+const Good = require('good')
+const Vision = require('vision')
 
 const options = {
     info: {
@@ -96,15 +95,14 @@ server.register([
   options:{
     bases: BASES,
     route: [
-        {path: '/api/', method: 'get'},      
-        {path: '/documentation', method: 'get'},      
+        {path: '/api/', method: 'get'},          
         {path: '/api/login', method: 'post'},
         {path: '/api/login-email', method: 'post'},
         {path: '/api/login-sms', method: 'post'},
         {path: '/api/logout', method: 'get'},
         {path: '/api/signup', method: 'post'},
-        {path: '/api/verify-email}', method: 'post'},
-        {path: '/api/verify-sms}', method: 'post'},
+        {path: '/api/verify-email', method: 'post'},
+        {path: '/api/verify-sms', method: 'post'},
         
     ],
     sneeze: {
