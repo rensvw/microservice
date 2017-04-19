@@ -12,7 +12,7 @@ const Handlebars = require('handlebars');
 const Boom = require('boom');
 const Bcrypt = require('bcrypt');
 const CookieAuth = require('hapi-auth-cookie');
-
+const Rif = require('rif)')
 
 var Good = require('good')
 var Vision = require('vision')
@@ -22,6 +22,12 @@ const Inert = require('inert');
 const HapiSwagger = require('hapi-swagger');
 
 
+const options = {
+    info: {
+            'title': 'SecurityPoC API Documentation',
+            'version': '1',
+        }
+    };
 
 // create new server instance
 const server = new Hapi.Server();
@@ -90,6 +96,7 @@ server.register([,
     bases: BASES,
     route: [
         {path: '/api/', method: 'get'},      
+        {path: '/documentation', method: 'get'},      
         {path: '/api/login', method: 'post'},
         {path: '/api/login-email', method: 'post'},
         {path: '/api/login-sms', method: 'post'},

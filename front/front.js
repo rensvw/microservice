@@ -41,6 +41,15 @@ server.route({
 })
 
 server.route({
+  method: 'GET', path: '/documentation/', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
   method: 'GET', path: '/api/', 
   handler: {
     wo: {
