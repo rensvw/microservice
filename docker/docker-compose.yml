@@ -127,5 +127,14 @@ services:
       - securitypoc
     deploy:
       replicas: 1
-
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - '9411:9411'
+    networks:
+      - securitypoc
+  mongo:  
+    image: mongo
+    ports:
+      - "27017:27017"
   
