@@ -69,7 +69,7 @@ server.seneca
     done( null, {pong:true,api:true,time:Date.now()})
   })
     .use('mesh',{
-	host: host,
+	host: HOST,
 	bases: BASES,
 	sneeze: {
           silent: JSON.parse(SILENT),
