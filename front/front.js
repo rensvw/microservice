@@ -44,7 +44,70 @@ server.route({
   method: 'GET', path: '/api/', 
   handler: {
     wo: {
-    
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/login', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/login-email', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/login-sms', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'GET', path: '/api/logout', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/signup', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/verify-email', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/verify-sms', 
+  handler: {
+    wo: {
+      passThrough: true
     }
   }
 })
