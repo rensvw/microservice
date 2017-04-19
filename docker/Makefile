@@ -9,6 +9,8 @@ containers :
 	$(MAKE) -C email container
 	$(MAKE) -C generators container
 	$(MAKE) -C hashing container
+	$(MAKE) -C front container
+
 	
 
 .PHONY : containers

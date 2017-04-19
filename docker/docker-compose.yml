@@ -44,6 +44,18 @@ services:
       - securitypoc
     deploy:
       replicas: 1
+  front:
+    image: front
+    environment:
+      HOST: 'eth2'
+      BASES: base0:39000,base1:39001
+      SILENT: 'true'
+    ports:
+      - '8000:8000'
+    networks:
+      - securitypoc
+    deploy:
+      replicas: 1
   user:
     image: user
     environment:
