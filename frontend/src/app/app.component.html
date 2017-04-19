@@ -1,0 +1,49 @@
+<h1>
+  {{title}}
+</h1>
+
+<table>
+  <thead>
+    <tr>
+      <td colspan="2">Cookies:</td>
+    </tr>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let cookie of keys">
+      <td>{{cookie}}</td>
+      <td>{{cookies[cookie]}}</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td>
+        <label for="iName">Name:</label>
+        <span><input type="text" id="iName" [(ngModel)]="cName"></span>
+      </td>
+      <td>
+        Value:
+        <span><input type="text" [(ngModel)]="cValue"></span>
+        <input type="button" value="Add" (click)="addCookie(cName, cValue)">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        Name:
+        <span><input type="text" [(ngModel)]="rName"></span>
+        <input type="button" value="Remove" (click)="removeCookie(rName)">
+        <input type="button" value="Remove All" (click)="removeAll()">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        Name:
+        <span><input type="text" [(ngModel)]="checkName"></span>
+        <input type="button" value="Check" (click)="checkCookie(checkName)">
+      </td>
+    </tr>
+  </tfoot>
+</table>

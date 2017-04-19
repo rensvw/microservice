@@ -1,6 +1,7 @@
 container :
 	cp ../../email/email-service.js .
-	cp ../../email/email.js .	
+	cp ../../email/email.js .
+	cp -r ../../email/templates .
 	sudo docker build -t email .
 	sudo docker images | grep email
 
