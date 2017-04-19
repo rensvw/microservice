@@ -68,7 +68,7 @@ server.register({
         options: options
     })
 
-server.register({
+server.register({11
    register: Good,
     options: {
       ops: {

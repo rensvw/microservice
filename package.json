@@ -27,6 +27,7 @@
     "hapi": "^15.0.3",
     "hapi-auth-basic": "^4.2.0",
     "hapi-auth-cookie": "^7.0.0",
+    "hapi-seneca": "^1.4.2",
     "hapi-swagger": "^7.7.0",
     "inert": "^4.2.0",
     "lodash": "^4.17.4",
