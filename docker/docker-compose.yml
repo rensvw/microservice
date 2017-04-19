@@ -78,7 +78,7 @@ services:
     image: repl
     environment:
       REPL_HOST: 0.0.0.0
-      HOST: '@eth2'
+      HOST: '@eth0'
       BASES: base0:39000,base1:39001
       SILENT: 'true'
     ports:
