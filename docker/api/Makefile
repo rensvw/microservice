@@ -1,5 +1,5 @@
 container :
-	cp ../../api/server3.js .
+	cp ../../api/server2.js .
 	cp ../../api/plugins.js .
 	
 	sudo docker build -t api .
