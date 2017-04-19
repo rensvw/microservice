@@ -23,8 +23,6 @@ const HapiSwagger = require('hapi-swagger');
 
 
 
-
-
 // create new server instance
 const server = new Hapi.Server();
 var rif = Rif()
