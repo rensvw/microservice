@@ -16,15 +16,11 @@ var Rif    = require('rif')
 var tag = 'api'
 
 var server = new Hapi.Server()
-var rif = Rif()
 
-
-var host = rif(HOST) || HOST
 
 
 server.connection({
-    port: PORT,
-    host: host
+    port: PORT
 })
 
 
