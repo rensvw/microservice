@@ -1,4 +1,4 @@
-var PORT = process.env.PORT || process.argv[2] || 0;
+var PORT = process.env.PORT || process.argv[2] || 3000;
 var HOST = process.env.HOST || process.argv[2] || '127.0.0.1';
 var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
 var SILENT = process.env.SILENT || process.argv[4] || 'true';
@@ -15,8 +15,8 @@ const CookieAuth = require('hapi-auth-cookie');
 const Rif = require('rif');
 const Inert = require('inert');
 const HapiSwagger = require('hapi-swagger');
-const Good = require('good')
-const Vision = require('vision')
+var Good = require('good')
+var Vision = require('vision')
 
 const options = {
     info: {
@@ -95,14 +95,15 @@ server.register([
   options:{
     bases: BASES,
     route: [
-        {path: '/api/', method: 'get'},          
+        {path: '/api/', method: 'get'},      
+        {path: '/documentation', method: 'get'},      
         {path: '/api/login', method: 'post'},
         {path: '/api/login-email', method: 'post'},
         {path: '/api/login-sms', method: 'post'},
         {path: '/api/logout', method: 'get'},
         {path: '/api/signup', method: 'post'},
-        {path: '/api/verify-email', method: 'post'},
-        {path: '/api/verify-sms', method: 'post'},
+        {path: '/api/verify-email}', method: 'post'},
+        {path: '/api/verify-sms}', method: 'post'},
         
     ],
     sneeze: {

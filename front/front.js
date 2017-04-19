@@ -11,7 +11,9 @@ var Rif = require('rif')
 var server = new Hapi.Server()
 var rif = Rif()
 
+
 var host = rif(HOST) || HOST
+
 
 server.connection({ 
   port: 8000
