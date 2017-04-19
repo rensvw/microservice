@@ -1,6 +1,6 @@
 FROM shared
 
-ADD server2.js .
+ADD server.js .
 ADD plugins.js .
 
 CMD ["node", "server2.js"]
