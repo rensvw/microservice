@@ -10,6 +10,8 @@ containers :
 	$(MAKE) -C generators container
 	$(MAKE) -C hashing container
 	$(MAKE) -C front container
+	$(MAKE) -C angular-frontend container
+	
 
 	
 
