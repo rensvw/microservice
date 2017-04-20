@@ -49,6 +49,10 @@ module.exports = function email(options) {
             .then((user) => {
                 if (user.succes) {
                     this.user = user;
+                    respond({
+                        uuid: this.user.uuid,
+                        message: 'The code has been sent to your email!'
+                    });
                     return act('role:email,cmd:generate-template', {
                             template: 'verification',
                             fullName: user.fullName,
@@ -62,12 +66,6 @@ module.exports = function email(options) {
                                 subject: "Verification Code",
                             });
                         })
-                        .then((emailSent) => {
-                            respond({
-                                uuid: this.user.uuid,
-                                message: emailSent.message
-                            });
-                        })
                         .catch((err) => {
                             respond(err);
                         });
@@ -77,13 +75,11 @@ module.exports = function email(options) {
                         message: 'User could not be found!'
                     });
                 }
-
             })
-
             .catch((err) => {
                 respond(err);
             });
-        }
+    }
 
     function sendMail(msg, respond) {
         let mailOptions = {
