@@ -131,12 +131,8 @@ services:
     image: openzipkin/zipkin
     ports:
       - '9411:9411'
-    networks:
-      - securitypoc
   angular-frontend:
     image: angular-frontend
     ports:
       - '80-80'
-    networks:
-      - securitypoc
   
