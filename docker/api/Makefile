@@ -1,5 +1,5 @@
 container :
-	cp ../../api/server.js .
+	cp ../../api/server-jwt.js .
 	
 	sudo docker build -t api .
 	sudo docker images | grep api

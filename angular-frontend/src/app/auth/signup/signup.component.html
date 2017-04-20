@@ -1,0 +1,45 @@
+<div class="card">
+  <h3 class="card-header">{{pageTitle}}</h3>
+  <div class="card-block">
+   
+    
+    <form [formGroup]="userForm" (ngSubmit)="createUser(userForm.value)">
+
+       <div class="form-group">
+         <div *ngIf='showError' class="alert alert-danger" role="alert">
+  <strong>Oh snap!</strong> Email Already Exists!
+        </div>
+        <label>Email:</label>
+        <input class="form-control" type="text" placeholder="Email" [formControl]="userForm.controls['email']" >
+
+      </div>
+       
+      <div class="form-group">
+        <label>Full Name:</label>
+        <input class="form-control" type="text" placeholder="Full name" [formControl]="userForm.controls['fullName']">
+      </div>
+
+       <div class="form-group" >
+        <label>Password:</label>
+        <input class="form-control" type="text" placeholder="Password" [formControl]="userForm.controls['password']" >
+
+        
+      </div>
+          <div class="form-group" >
+        <label>Country Code:</label>
+        <input class="form-control" type="text" placeholder="Country code" [formControl]="userForm.controls['countryCode']">
+      </div>
+
+      <div class="form-group" >
+        <label>Mobile Phone Number:</label>
+        <input class="form-control" type="text" placeholder="Mobile phone number" [formControl]="userForm.controls['mobilePhoneNumber']">
+      </div>
+      <button type="button" class="btn btn-primary" (click)="goBack()">Back</button>
+      <button type="submit" [disabled]="userForm.invalid" class="btn btn-primary pull-right"><i *ngIf='showSpinner'class="fa fa-spinner fa-spin"></i> Save</button>
+      </form>
+      
+      
+  </div>
+</div>
+
+

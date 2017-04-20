@@ -1,5 +1,5 @@
 FROM shared
 
-ADD server.js .
+ADD server-jwt.js .
 
-CMD ["node", "server.js"]
+CMD ["node", "server-jwt.js"]

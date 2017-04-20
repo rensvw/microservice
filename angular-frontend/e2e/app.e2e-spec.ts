@@ -1,10 +1,10 @@
-import { FrontendPage } from './app.po';
+import { Tutorial2Page } from './app.po';
 
-describe('frontend App', () => {
-  let page: FrontendPage;
+describe('tutorial2 App', function() {
+  let page: Tutorial2Page;
 
   beforeEach(() => {
-    page = new FrontendPage();
+    page = new Tutorial2Page();
   });
 
   it('should display message saying app works', () => {

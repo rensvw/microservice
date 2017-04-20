@@ -38,7 +38,7 @@ module.exports = {
     // First application
     {
     name        : "api",
-    script      : "./api/server2.js",
+    script      : "./api/server-jwt.js",
     watch       : './api',
     instances : instances,
     exec_mode : "cluster",

@@ -1,0 +1,20 @@
+<div class="card">
+  <h3 class="card-header">{{pageTitle}}</h3>
+  <div class="card-block">
+
+   <form #loginForm="ngForm" (ngSubmit)="authenticate(loginForm.value)" autocomplete="off" novalidate>
+    <div class="form-group">
+      <label for="userName">Email</label>
+      <input required (ngModel)="email" name="email" id="email" type="text" class="form-control" placeholder="Email" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input required (ngModel)="password" name="password" id="password" type="password" class="form-control" placeholder="password" />
+    </div>
+    <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary pull-right">Login</button>
+      </form>
+
+  </div>
+   <div style="align-self: center"><a [routerLink]="['/signup']" routerLinkActive="active">Don't have an account yet? Click here to register!</a></div>
+
+</div>
