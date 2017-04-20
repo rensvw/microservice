@@ -1,5 +1,4 @@
 container :
-
 	cp -r ../../angular-frontend/dist .
 	docker build -t angular-frontend .
 	docker images | grep angular-frontend
