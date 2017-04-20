@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IUser } from './../users/user';
+import { IUser } from './user';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { ICredentials } from './credentials';
@@ -58,8 +58,7 @@ export class AuthService {
         return tokenNotExpired();
     }
 
-    updateCurrentUser(firstName:string,lastName:string){
-        this.currentUser.firstName = firstName;
-        this.currentUser.lastName = lastName;
+    updateCurrentUser(fullName:string){
+        this.currentUser.fullName = fullName;
     }
 }

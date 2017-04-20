@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import {FormGroup, FormControl, Validators, FormBuilder, AbstractControl } from '@angular/forms';
-import { IUser } from './../../users/user';
+import { IUser } from './../user';
 import { AuthService } from './../auth.service';
 import 'rxjs/add/operator/debounceTime';
 

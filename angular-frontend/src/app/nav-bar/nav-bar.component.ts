@@ -12,7 +12,7 @@ import { AuthService } from './../auth/auth.service';
 })
 export class NavBarComponent implements OnInit {
 
-  pageTitle: string = 'UserAdmin';
+  pageTitle: string = 'SecurityPoC';
 
   constructor(private _authService: AuthService) { }
 
