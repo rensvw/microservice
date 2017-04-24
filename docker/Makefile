@@ -4,6 +4,9 @@ containers :
 	$(MAKE) -C api container
 	$(MAKE) -C user container
 	$(MAKE) -C auth container
+	$(MAKE) -C auth-sms container
+	$(MAKE) -C auth-email container
+	$(MAKE) -C auth-app container	
 	$(MAKE) -C sms container
 	$(MAKE) -C repl container
 	$(MAKE) -C email container

@@ -7,7 +7,7 @@ module.exports = function auth(options) {
   var act = Promise.promisify(this.act, {context: this});
 
   this.add({role:'auth',cmd:'signup'}, signup);     
-  this.add({role:'auth',cmd:'authenticate'}, authenticate);
+  this.add({role:'auth',cmd:'authenticate',mfa:'none'}, authenticate);
 
   function signup(msg, respond) {
     let email = msg.email;
@@ -57,7 +57,10 @@ module.exports = function auth(options) {
                 return respond({
                   succes: result.succes,
                   message: result.message,
-                  user: user
+                  user: {
+                    fullname: user.fullName,
+                    email: user.email
+                  }
                 });
               } else {
                 return respond({

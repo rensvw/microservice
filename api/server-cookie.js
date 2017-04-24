@@ -177,7 +177,7 @@ const authorizeAndSendSMSCode = (request,reply) => {
   }
   let email = request.payload.email;
   let password = request.payload.password;
-  server.seneca.act('role:auth,cmd:authenticate,tfa:sms', {
+  server.seneca.act('role:auth,cmd:authenticate,mfa:sms', {
     password: password,
     email: email
   }, function (err, respond) {
@@ -200,7 +200,7 @@ const verifySMSCodeAndLogin = (request, reply) => {
   }
   let code = request.payload.code;
   let uuid = request.payload.uuid;
-  server.seneca.act('role:auth,cmd:verify,tfa:sms', {
+  server.seneca.act('role:auth,cmd:verify,mfa:sms', {
     code: code,
     uuid: uuid
   }, function (err, respond) {
@@ -253,7 +253,7 @@ const authorizeAndSendEmailCode = (request,reply) => {
   }
   let email = request.payload.email;
   let password = request.payload.password;
-  server.seneca.act('role:auth,cmd:authenticate,tfa:email', {
+  server.seneca.act('role:auth,cmd:authenticate,mfa:email', {
     password: password,
     email: email
   }, function (err, respond) {
@@ -276,7 +276,7 @@ const verifyEmailCodeAndLogin = (request, reply) => {
   }
   let code = request.payload.code;
   let uuid = request.payload.uuid;
-  server.seneca.act('role:auth,cmd:verify,tfa:email', {
+  server.seneca.act('role:auth,cmd:verify,mfa:email', {
     code: code,
     uuid: uuid
   }, function (err, respond) {

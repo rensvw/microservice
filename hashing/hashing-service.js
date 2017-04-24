@@ -6,7 +6,13 @@ require('seneca')({tag: 'hashing-service'})
   .use(require('./hashing'))
   .use('zipkin-tracer', {sampling:1})
   .use('mesh',{
-    pin: 'role:hash,cmd:*',
+    listen: [
+      { 
+      pins: [
+      'role:hash,cmd:newHash', 
+      'role:hash,cmd:comparePasswords'
+      ]
+    }],
     bases: BASES,
     host: HOST,
     sneeze: {

@@ -7,7 +7,14 @@ var seneca = require('seneca')({tag: 'sms-service'})
   seneca.use(require('./sms'))
   .use('zipkin-tracer', {sampling:1})
   .use('mesh',{
-    pin: 'role:sms,cmd:*',
+    listen: [
+      { 
+      pins: [
+      'role:sms,cmd:send', 
+      'role:sms,cmd:save,send:true',
+      'role:sms,cmd:save,send:false'
+      ]
+    }],
     bases: BASES,
     host: HOST,
     sneeze: {

@@ -1,9 +1,15 @@
-##Zipkin
+## Zipkin
 
 docker run -d -p 9411:9411 openzipkin/zipkin
 
 ## Mongo
 
-docker run --name mongodb -d mongo
+docker run --name mongo -d mongo
+
+## Redis
+
+docker run --name auth-app-redis -v /home/rensvanw/Development/data-volumes-d redis 
+
+## REPL
 
 rlwrap telnet localhost 10001

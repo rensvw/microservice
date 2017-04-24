@@ -10,7 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SignupComponent } from './signup/signup.component';
 
-function authHttpServiceFactory(http: Http, options: RequestOptions) {
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({tokenName: 'token',
         tokenGetter: (() => sessionStorage.getItem('token')),
         globalHeaders: [{'Content-Type':'application/json'}],

@@ -1,8 +1,5 @@
 container :
 	cp ../../auth/auth.js .
-	cp ../../auth/auth-sms.js .
-	cp ../../auth/auth-email.js .
-	
 	cp ../../auth/auth-service.js .
 	
 	sudo docker build -t auth .

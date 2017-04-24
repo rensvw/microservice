@@ -6,7 +6,15 @@ require('seneca')({tag: 'generators-service'})
   .use(require('./generators'))
   .use('zipkin-tracer', {sampling:1})
   .use('mesh',{
-    pin: 'role:generate,cmd:*',
+    listen: [
+      { 
+      pins: [
+      'role:generate,cmd:code', 
+      'role:generate,cmd:uuid',
+      'role:generate,cmd:totp-key',
+      'role:generate,cmd:totp-uri'
+      ]
+    }],
     host:HOST,
     bases:BASES,
     sneeze: {
