@@ -101,7 +101,7 @@ function updateUserWithCode(msg,respond){
         message: "User could not be found!"
       });
     }
-    if(msg.type=="email"){
+    if(msg.type==="email"){
       result.data$(result.emailCodes.push(
         {
           code: msg.code,
@@ -109,7 +109,7 @@ function updateUserWithCode(msg,respond){
         })
       );
     }
-    else if (msg.type=="sms"){
+    else if (msg.type==="sms"){
       result.data$(result.smsCodes.push(
         {
           code: msg.code,
@@ -122,7 +122,7 @@ function updateUserWithCode(msg,respond){
       uuid:uuidV4()
     });
     result.save$(function(err,user){
-      if(msg.type=="sms"){
+      if(msg.type==="sms"){
         respond(err,{ succes:true,
           message: "Succesfully added the generated code to the user object!",
           uuid: user.uuid,

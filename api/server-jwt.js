@@ -192,10 +192,9 @@ const authorizeAndSendSMSCode = (request,reply) => {
   }, function (err, respond) {
     if (err) {
       return reply(Boom.badRequest(respond(err)));
-    } else if (respond.succes == true) {
-      
+    } else if (respond.succes) {
       return reply(respond);
-    } else if (respond.succes == false) {
+    } else if (!respond.succes) {
       return reply(Boom.unauthorized("Username or password is wrong!"));
     }
   });
@@ -270,10 +269,10 @@ const authorizeAndSendEmailCode = (request,reply) => {
   }, function (err, respond) {
     if (err) {
       return reply(Boom.badRequest(respond(err)));
-    } else if (respond.succes == true) {
+    } else if (respond.succes) {
       
       return reply(respond);
-    } else if (respond.succes == false) {
+    } else if (!respond.succes) {
       return reply(Boom.unauthorized("Username or password is wrong!"));
     }
   });
@@ -320,10 +319,10 @@ const authorizeAndDirectForTOTPApp = (request,reply) => {
   }, function (err, respond) {
     if (err) {
       return reply(Boom.badRequest(respond(err)));
-    } else if (respond.succes == true) {
+    } else if (respond.succes) {
       // redirect
       return reply(respond);
-    } else if (respond.succes == false) {
+    } else if (!respond.succes) {
       return reply(Boom.unauthorized("Username or password is wrong, or you did not add the authenticator app to your account!"));
     }
   });

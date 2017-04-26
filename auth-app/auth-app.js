@@ -112,7 +112,7 @@ module.exports = function authenticatorAppAuth(option) {
                                                     succes: false,
                                                     message: "Code is incorrect!"
                                                 });
-                                            } else if (verify.delta == 0) {
+                                            } else if (verify.delta === 0) {
                                                 return respond({
                                                     succes: true,
                                                     user: {
@@ -121,7 +121,7 @@ module.exports = function authenticatorAppAuth(option) {
                                                     },
                                                     message: "Code is correct, welcome!"
                                                 });
-                                            } else if (verify.delta == -1) {
+                                            } else if (verify.delta === -1) {
                                                 return respond({
                                                     succes: false,
                                                     message: "You are to late!"
@@ -176,7 +176,7 @@ module.exports = function authenticatorAppAuth(option) {
                 succes: false,
                 message: "Code is incorrect!"
             });
-        } else if (verify.delta == 0) {
+        } else if (verify.delta === 0) {
             act("role:user,create,type:totp",{
                 email: msg.email
             })
@@ -189,7 +189,7 @@ module.exports = function authenticatorAppAuth(option) {
             .catch((err)=>{
                 respond(err);
             })
-        } else if (verify.delta == -1) {
+        } else if (verify.delta === -1) {
             return respond({
                 succes: false,
                 message: "You are to late!"
