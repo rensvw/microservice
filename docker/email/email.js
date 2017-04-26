@@ -103,5 +103,4 @@ module.exports = function email(options) {
     this.add({role: "email",cmd: "send"}, sendMail);
     this.add({role: "email",cmd: "send",type: "2fa" }, sendMailWithCode);
     this.add({role: "email",cmd: "generate-template"}, generateTemplate);
-    
 };
