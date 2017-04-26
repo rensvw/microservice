@@ -9,7 +9,7 @@ seneca
   .use('basic')
   .use(require('./user-app'))
   .use('redis-store', {
-  uri: 'redis://172.17.0.2:6379'
+  uri: 'redis://172.17.0.3:6379'
   
 })
 .use('zipkin-tracer', {sampling:1})

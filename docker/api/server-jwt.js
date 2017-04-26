@@ -107,6 +107,9 @@ server.register([
         {path: '/api/signup', method: 'post'},
         {path: '/api/verify-email', method: 'post'},
         {path: '/api/verify-sms', method: 'post'},
+        {path: '/api/login-app', method: 'post'},
+        {path: '/api/verify-app', method: 'post'},
+        
         
     ],
     sneeze: {
@@ -158,7 +161,7 @@ const login = (request, reply) => {
   }
   let email = request.payload.email;
   let password = request.payload.password;
-  server.seneca.act('role:auth,cmd:authenticate', {
+  server.seneca.act('role:auth,cmd:authenticate,mfa:none', {
     password: password,
     email: email
   }, function (err, respond) {
@@ -183,7 +186,7 @@ const authorizeAndSendSMSCode = (request,reply) => {
   }
   let email = request.payload.email;
   let password = request.payload.password;
-  server.seneca.act('role:auth,cmd:authenticate,tfa:sms', {
+  server.seneca.act('role:auth,cmd:authenticate,mfa:sms', {
     password: password,
     email: email
   }, function (err, respond) {
@@ -206,7 +209,7 @@ const verifySMSCodeAndLogin = (request, reply) => {
   }
   let code = request.payload.code;
   let uuid = request.payload.uuid;
-  server.seneca.act('role:auth,cmd:verify,tfa:sms', {
+  server.seneca.act('role:auth,cmd:verify,mfa:sms', {
     code: code,
     uuid: uuid
   }, function (err, respond) {
@@ -261,7 +264,7 @@ const authorizeAndSendEmailCode = (request,reply) => {
   }
   let email = request.payload.email;
   let password = request.payload.password;
-  server.seneca.act('role:auth,cmd:authenticate,tfa:email', {
+  server.seneca.act('role:auth,cmd:authenticate,mfa:email', {
     password: password,
     email: email
   }, function (err, respond) {
@@ -284,7 +287,57 @@ const verifyEmailCodeAndLogin = (request, reply) => {
   }
   let code = request.payload.code;
   let uuid = request.payload.uuid;
-  server.seneca.act('role:auth,cmd:verify,tfa:email', {
+  server.seneca.act('role:auth,cmd:verify,mfa:email', {
+    code: code,
+    uuid: uuid
+  }, function (err, respond) {
+    if (err) {
+      reply(err);
+    } else if (respond.succes) {
+      return reply({
+          succes: respond.succes,
+          message: respond.message,
+          token: createToken(respond.user)
+        });
+    } else if (!respond.succes) {
+     reply({succes:respond.succes,
+      message: respond.message})
+    }
+  });
+};
+
+const authorizeAndDirectForTOTPApp = (request,reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let email = request.payload.email;
+  let password = request.payload.password;
+  server.seneca.act('role:auth,cmd:authenticate,mfa:app', {
+    password: password,
+    email: email
+  }, function (err, respond) {
+    if (err) {
+      return reply(Boom.badRequest(respond(err)));
+    } else if (respond.succes == true) {
+      // redirect
+      return reply(respond);
+    } else if (respond.succes == false) {
+      return reply(Boom.unauthorized('Username or password is wrong, or you did not add the authenticator app to your account!'));
+    }
+  });
+}
+
+const verifyTOTPCodeAndLogin = (request, reply) => {
+  if (request.auth.isAuthenticated) {
+    return reply({
+      message: "You're already authenticated!"
+    });
+  }
+  let code = request.payload.code;
+  let uuid = request.payload.uuid;
+  server.seneca.act('role:auth,cmd:verify,mfa:app', {
     code: code,
     uuid: uuid
   }, function (err, respond) {
@@ -393,6 +446,38 @@ const verifyEmailCodeAndLogin = (request, reply) => {
           }
         },
         handler: verifyEmailCodeAndLogin,
+
+      }
+    },{
+      method: 'POST',
+      path: '/api/login-app',
+      config: {
+        description: 'Login route with Authenticator App verification',
+        notes: 'Returns a guid if username and password are correct.',
+        tags: ['api'],
+        validate: {
+          payload: {
+            email: Joi.string().email().required(),
+            password: Joi.string().min(2).max(200).required()
+          }
+        },
+        handler: authorizeAndDirectForTOTPApp,
+       
+      }
+    }, {
+      method: 'POST',
+      path: '/api/verify-app',
+      config: {
+        description: 'Verify your TOTP code when logging in',
+        notes: 'Returns a cookie session if authorised',
+        tags: ['api'],
+        validate: {
+          payload: {
+            uuid: Joi.string().required(),
+            code: Joi.string().required()
+          }
+        },
+        handler: verifyTOTPCodeAndLogin,
 
       }
     },

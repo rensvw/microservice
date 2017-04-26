@@ -3,9 +3,6 @@ module.exports = function user( options ) {
 const Promise = require('bluebird');
 var act = Promise.promisify(this.act, {context: this});
 
-this.add({role:'user',cmd:'create',type:'totp'}, createUserWithKeyWhileCheckingForExistingUser);
-this.add({role:'user',cmd:'get',key:'totp'}, getUserWithKey);
-
 function getUserWithKey(msg, respond) {
   var user = this.make$('user-app');
   var email = msg.email;
@@ -62,6 +59,10 @@ function createUserWithKeyWhileCheckingForExistingUser(msg, respond) {
     }
   });
 }
+
+this.add({role:'user',cmd:'create',type:'totp'}, createUserWithKeyWhileCheckingForExistingUser);
+this.add({role:'user',cmd:'get',key:'totp'}, getUserWithKey);
+
 };
 
  

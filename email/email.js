@@ -13,10 +13,7 @@ module.exports = function email(options) {
         }
     });
 
-    this.add({role: 'email',cmd: 'send'}, sendMail);
-    this.add({role: 'email',cmd: 'send',type: '2fa' }, sendMailWithCode);
-    this.add({role: 'email',cmd: 'generate-template'}, generateTemplate);
-
+    
     const act = Promise.promisify(this.act, {
         context: this
     });
@@ -67,7 +64,7 @@ module.exports = function email(options) {
                             });
                         })
                         .catch((err) => {
-                            respond(err);
+                            return respond(err);
                         });
                 } else {
                     return respond({
@@ -102,4 +99,9 @@ module.exports = function email(options) {
             });
         });
     }
+
+    this.add({role: 'email',cmd: 'send'}, sendMail);
+    this.add({role: 'email',cmd: 'send',type: '2fa' }, sendMailWithCode);
+    this.add({role: 'email',cmd: 'generate-template'}, generateTemplate);
+    
 };

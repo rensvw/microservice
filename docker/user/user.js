@@ -3,13 +3,12 @@ module.exports = function user( options ) {
 const moment = require('moment');
 const uuidV4 = require('uuid/v4');
 
-
 this.add({role:'user',cmd:'create'}, createUser);
 this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
 this.add({'role':'user','cmd':'get'}, getUser);
 this.add({'role':'user','cmd':'get','param':'uuid'}, getUserByUuid);
+this.add({'role':'user','cmd':'update','param':'uuid'}, updateUserWithUuid);
 this.add({'role':'user','cmd':'update','service':'2fa'}, updateUserWithCode);
-
 
 function getUser(msg, respond) {
   var user = this.make$('user');
@@ -73,6 +72,29 @@ function getUserByUuid(msg, respond) {
     }
   });
 }
+
+function updateUserWithUuid(msg,respond){
+  var user = this.make$('user');
+  user.load$({
+    email: msg.email
+  }, function(err,result){
+    if (!result) {
+      respond({
+        succes: false,
+        message: "User could not be found!"
+      });
+    }
+    result.data$({
+      uuid:uuidV4()
+    });
+    result.save$(function(err,user){
+        respond(err,{ succes:true,
+          message: "Succesfully added the uuid to the user!",
+          uuid: user.uuid,    
+      })
+    }
+  );
+})}
 
 
 function updateUserWithCode(msg,respond){

@@ -6,9 +6,6 @@ module.exports = function auth(options) {
 
   var act = Promise.promisify(this.act, {context: this});
 
-  this.add({role:'auth',cmd:'signup'}, signup);     
-  this.add({role:'auth',cmd:'authenticate',mfa:'none'}, authenticate);
-
   function signup(msg, respond) {
     let email = msg.email;
     let fullName = msg.fullName;
@@ -79,4 +76,8 @@ module.exports = function auth(options) {
         return respond(err);
       });
   }
+
+  this.add({role:'auth',cmd:'signup'}, signup);     
+  this.add({role:'auth',cmd:'authenticate',mfa:'none'}, authenticate);
+  
   };

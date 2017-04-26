@@ -5,8 +5,7 @@ module.exports = function auth(options) {
 
   var act = Promise.promisify(this.act, {context: this});
 
-  this.add({role:'auth',cmd:'authenticate',mfa:'sms'}, authenticateAndSendSMSCode);
-  this.add({role:'auth',cmd:'verify',mfa:'sms'}, verifySMSCode);
+ 
 
   function authenticateAndSendSMSCode(msg, respond) {
     let email = msg.email;
@@ -96,5 +95,8 @@ function verifySMSCode(msg, respond) {
         respond(err);
       })
   }
+
+ this.add({role:'auth',cmd:'authenticate',mfa:'sms'}, authenticateAndSendSMSCode);
+  this.add({role:'auth',cmd:'verify',mfa:'sms'}, verifySMSCode);
 
 }

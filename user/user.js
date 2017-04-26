@@ -3,13 +3,6 @@ module.exports = function user( options ) {
 const moment = require('moment');
 const uuidV4 = require('uuid/v4');
 
-this.add({role:'user',cmd:'create'}, createUser);
-this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
-this.add({'role':'user','cmd':'get'}, getUser);
-this.add({'role':'user','cmd':'get','param':'uuid'}, getUserByUuid);
-this.add({'role':'user','cmd':'update','param':'uuid'}, updateUserWithUuid);
-this.add({'role':'user','cmd':'update','service':'2fa'}, updateUserWithCode);
-
 function getUser(msg, respond) {
   var user = this.make$('user');
   var email = msg.email;
@@ -217,6 +210,14 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
     }
   });
 }
+
+this.add({role:'user',cmd:'create'}, createUser);
+this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
+this.add({'role':'user','cmd':'get'}, getUser);
+this.add({'role':'user','cmd':'get','param':'uuid'}, getUserByUuid);
+this.add({'role':'user','cmd':'update','param':'uuid'}, updateUserWithUuid);
+this.add({'role':'user','cmd':'update','service':'2fa'}, updateUserWithCode);
+
 };
 
  

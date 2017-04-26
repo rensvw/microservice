@@ -1,16 +1,11 @@
-const config = require('./config');
-const client = require('twilio')(config.accountSid, config.authToken);
-const randomID = require('random-id');
-var Promise = require('bluebird');
-
 module.exports = function sms(options){
 
-    var act = Promise.promisify(this.act, {context: this});
+    const config = require('./config');
+    const client = require('twilio')(config.accountSid, config.authToken);
+    const randomID = require('random-id');
+    const Promise = require('bluebird');
 
-    this.add({role:'sms',cmd:'send'}, sendTextMessage);
-    this.add({role:'sms',cmd:'save',send:'true'}, sendTextMessageWithCode)
-    this.add({role:'sms',cmd:'save',send:'false'}, createSMSCodeAndSave)
-    
+    var act = Promise.promisify(this.act, {context: this});
     
     function sendTextMessage(msg, respond) {
         let message = msg.message;
@@ -96,4 +91,8 @@ module.exports = function sms(options){
             respond(err);
         });
     }
+
+    this.add({role:'sms',cmd:'send'}, sendTextMessage);
+    this.add({role:'sms',cmd:'save',send:'true'}, sendTextMessageWithCode)
+    this.add({role:'sms',cmd:'save',send:'false'}, createSMSCodeAndSave)
 }

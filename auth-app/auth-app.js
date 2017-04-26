@@ -7,27 +7,7 @@ module.exports = function authenticatorAppAuth(option) {
         context: this
     });
 
-    this.add({
-        role: 'auth',
-        cmd: 'authenticate',
-        mfa: 'app'
-    }, authenticate);
-    this.add({
-        role: 'auth',
-        cmd: 'verify',
-        mfa: 'app'
-    }, verifyToken);
-    this.add({
-        role: 'auth',
-        cmd: 'create',
-        mfa: 'app',
-        url: 'uri'
-    }, createUri);
-    this.add({
-        role: 'auth',
-        cmd: 'save',
-        mfa: 'new-app',
-    }, verifyUriAndSaveToAccount);
+    
 
     'use strict';
 
@@ -216,5 +196,27 @@ module.exports = function authenticatorAppAuth(option) {
             });
         }
     }
+
+    this.add({
+        role: 'auth',
+        cmd: 'authenticate',
+        mfa: 'app'
+    }, authenticate);
+    this.add({
+        role: 'auth',
+        cmd: 'verify',
+        mfa: 'app'
+    }, verifyToken);
+    this.add({
+        role: 'auth',
+        cmd: 'create',
+        mfa: 'app',
+        url: 'uri'
+    }, createUri);
+    this.add({
+        role: 'auth',
+        cmd: 'save',
+        mfa: 'new-app',
+    }, verifyUriAndSaveToAccount);
 
 }

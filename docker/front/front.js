@@ -105,6 +105,24 @@ server.route({
   }
 })
 
+server.route({
+  method: 'POST', path: '/api/login-app', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
+server.route({
+  method: 'POST', path: '/api/verify-app', 
+  handler: {
+    wo: {
+      passThrough: true
+    }
+  }
+})
+
 
 server.start(function(){
   console.log('front',server.info.uri)

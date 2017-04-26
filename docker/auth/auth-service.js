@@ -6,7 +6,13 @@ require('seneca')({tag: 'auth-service'})
   .use(require('./auth'))
   .use('zipkin-tracer', {sampling:1})
   .use('mesh',{
-    pin: 'role:auth,cmd:*',
+    listen: [
+      { 
+      pins: [
+      'role:auth,cmd:signup', 
+      'role:auth,cmd:authenticate,mfa:none',
+      ]
+    }],
     bases: BASES,
     host: HOST,
     sneeze: {

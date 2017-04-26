@@ -5,8 +5,8 @@ module.exports = function auth(options) {
 
   var act = Promise.promisify(this.act, {context: this});
 
-  this.add({role:'auth',cmd:'authenticate',tfa:'email'}, authenticateAndSendEmail);
-  this.add({role:'auth',cmd:'verify',tfa:'email'}, verifyEmailCode);
+  this.add({role:'auth',cmd:'authenticate',mfa:'email'}, authenticateAndSendEmail);
+  this.add({role:'auth',cmd:'verify',mfa:'email'}, verifyEmailCode);
 
  function authenticateAndSendEmail(msg,respond){
       let email = msg.email;
