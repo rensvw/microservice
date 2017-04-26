@@ -1,6 +1,6 @@
 module.exports = function hashing(options) {
 
-    const bcrypt = require('bcrypt');
+    const bcrypt = require("bcrypt");
     const saltRounds = 10;
 
     function hashPassword(msg, respond) {
@@ -30,7 +30,7 @@ module.exports = function hashing(options) {
     }
 
 
-    this.add({role: 'hash',cmd: 'newHash'}, hashPassword);
-    this.add({role: 'hash',cmd: 'comparePasswords'}, comparePassword);
+    this.add({role: "hash",cmd: "newHash"}, hashPassword);
+    this.add({role: "hash",cmd: "comparePasswords"}, comparePassword);
 
 }

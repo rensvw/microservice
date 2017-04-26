@@ -1,29 +1,26 @@
 module.exports = function email(options) {
 
-    const nodemailer = require('nodemailer');
-    const Promise = require('bluebird');
-    const EmailTemplate = require('email-templates').EmailTemplate
-    const path = require('path');
+    const nodemailer = require("nodemailer");
+    const Promise = require("bluebird");
+    const EmailTemplate = require("email-templates").EmailTemplate
+    const path = require("path");
 
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        service: "gmail",
         auth: {
-            user: 'rensvanw@gmail.com',
-            pass: 'SojCsv4XOBXp'
+            user: "rensvanw@gmail.com",
+            pass: "SojCsv4XOBXp"
         }
     });
 
-    this.add({role: 'email',cmd: 'send'}, sendMail);
-    this.add({role: 'email',cmd: 'send',type: '2fa' }, sendMailWithCode);
-    this.add({role: 'email',cmd: 'generate-template'}, generateTemplate);
-
+    
     const act = Promise.promisify(this.act, {
         context: this
     });
 
     function generateTemplate(msg, respond) {
         let template = msg.template;
-        let templateDir = path.join(__dirname, 'templates', template);
+        let templateDir = path.join(__dirname, "templates", template);
         let newTemplate = new EmailTemplate(templateDir)
 
         newTemplate.render({
@@ -39,9 +36,9 @@ module.exports = function email(options) {
 
 
     function sendMailWithCode(msg, respond) {
-        act('role:generate,cmd:code')
+        act("role:generate,cmd:code")
             .then((generatedCode) => {
-                return act('role:user,cmd:update,service:2fa,type:email', {
+                return act("role:user,cmd:update,service:2fa,type:email", {
                     email: msg.email,
                     code: generatedCode.code
                 });
@@ -51,15 +48,15 @@ module.exports = function email(options) {
                     this.user = user;
                     respond({
                         uuid: this.user.uuid,
-                        message: 'The code has been sent to your email!'
+                        message: "The code has been sent to your email!"
                     });
-                    return act('role:email,cmd:generate-template', {
-                            template: 'verification',
+                    return act("role:email,cmd:generate-template", {
+                            template: "verification",
                             fullName: user.fullName,
                             code: user.code
                         })
                         .then((template) => {
-                            return act('role:email,cmd:send', {
+                            return act("role:email,cmd:send", {
                                 html: template.html,
                                 text: template.text,
                                 email: msg.email,
@@ -67,12 +64,12 @@ module.exports = function email(options) {
                             });
                         })
                         .catch((err) => {
-                            respond(err);
+                            return respond(err);
                         });
                 } else {
                     return respond({
                         succes: false,
-                        message: 'User could not be found!'
+                        message: "User could not be found!"
                     });
                 }
             })
@@ -95,11 +92,16 @@ module.exports = function email(options) {
             if (error) {
                 return console.log(error);
             }
-            console.log('Message %s sent: %s', info.messageId, info.response);
+            console.log("Message %s sent: %s", info.messageId, info.response);
             respond({
                 succes: true,
                 message: "Message has been sent!"
             });
         });
     }
+
+    this.add({role: "email",cmd: "send"}, sendMail);
+    this.add({role: "email",cmd: "send",type: "2fa" }, sendMailWithCode);
+    this.add({role: "email",cmd: "generate-template"}, generateTemplate);
+    
 };

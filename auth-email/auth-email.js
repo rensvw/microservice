@@ -1,25 +1,25 @@
 module.exports = function auth(options) {
 
-  let moment = require('moment');
-  const Promise = require('bluebird');
+  const moment = require("moment");
+  const Promise = require("bluebird");
 
   var act = Promise.promisify(this.act, {context: this});
 
  function authenticateAndSendEmail(msg,respond){
       let email = msg.email;
       let password = msg.password;
-    act('role:user,cmd:get', {email: email})
+    act("role:user,cmd:get", {email: email})
       .then((user) => {
         if (user.succes) {
-          act('role:hash,cmd:comparePasswords', {password: password,hash: user.password})
+          act("role:hash,cmd:comparePasswords", {password: password,hash: user.password})
             .then((authenticated) => {
               if (authenticated.succes) {
-                return act('role:email,cmd:send,type:2fa', {email: email})
+                return act("role:email,cmd:send,type:2fa", {email: email})
                   .then((result) => {
                     return respond({
                       succes: true,
                       uuid: result.uuid,
-                      message: "Username and password are correct, we've send you a code in an email!"
+                      message: "Username and password are correct, we"ve send you a code in an email!"
                     });
                   })
                   .catch((err) => {
@@ -51,13 +51,13 @@ module.exports = function auth(options) {
     let uuid = msg.uuid;
     let code = msg.code;
     let seneca = this;
-    act('role:user,cmd:get,param:uuid', {uuid: uuid})
+    act("role:user,cmd:get,param:uuid", {uuid: uuid})
       .then((user) => {
         if (!user) {
           respond(user);
         } else if (user) {
           let emailCodes = user.emailCodes;
-          let newTime = moment(emailCodes[emailCodes.length - 1].timeCreated).add(4, 'm');
+          let newTime = moment(emailCodes[emailCodes.length - 1].timeCreated).add(4, "m");
           if (newTime > moment()) {
             if (code == emailCodes[emailCodes.length - 1].code) {
               respond({
@@ -87,8 +87,8 @@ module.exports = function auth(options) {
       })
   }
 
-  this.add({role:'auth',cmd:'authenticate',mfa:'email'}, authenticateAndSendEmail);
-  this.add({role:'auth',cmd:'verify',mfa:'email'}, verifyEmailCode);
+  this.add({role:"auth",cmd:"authenticate",mfa:"email"}, authenticateAndSendEmail);
+  this.add({role:"auth",cmd:"verify",mfa:"email"}, verifyEmailCode);
 
 
 }

@@ -1,11 +1,11 @@
 
 "use strict"
-var HOST = process.env.HOST || process.argv[2] || '127.0.0.1'
-var BASES = (process.env.BASES || process.argv[3] || '127.0.0.1:39000,127.0.0.1:39001').split(',');
-var SILENT = process.env.SILENT || process.argv[4] || 'true'
+var HOST = process.env.HOST || process.argv[2] || "127.0.0.1"
+var BASES = (process.env.BASES || process.argv[3] || "127.0.0.1:39000,127.0.0.1:39001").split(",");
+var SILENT = process.env.SILENT || process.argv[4] || "true"
 
-var Hapi = require('hapi')
-var Rif = require('rif')
+var Hapi = require("hapi")
+var Rif = require("rif")
 
 
 var server = new Hapi.Server()
@@ -19,10 +19,10 @@ server.connection({
   port: 8000
 })
 
-server.register(require('inert'))
+server.register(require("inert"))
 
 server.register({
-  register: require('wo'),
+  register: require("wo"),
   options: {
     bases: BASES,
     sneeze: {
@@ -34,7 +34,7 @@ server.register({
 })
 
 server.route({
-  method: 'GET', path: '/api/', 
+  method: "GET", path: "/api/", 
   handler: {
     wo: {
       passThrough: true
@@ -43,7 +43,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/login', 
+  method: "POST", path: "/api/login", 
   handler: {
     wo: {
       passThrough: true
@@ -52,7 +52,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/login-email', 
+  method: "POST", path: "/api/login-email", 
   handler: {
     wo: {
       passThrough: true
@@ -61,7 +61,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/login-sms', 
+  method: "POST", path: "/api/login-sms", 
   handler: {
     wo: {
       passThrough: true
@@ -70,7 +70,7 @@ server.route({
 })
 
 server.route({
-  method: 'GET', path: '/api/logout', 
+  method: "GET", path: "/api/logout", 
   handler: {
     wo: {
       passThrough: true
@@ -79,7 +79,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/signup', 
+  method: "POST", path: "/api/signup", 
   handler: {
     wo: {
       passThrough: true
@@ -88,7 +88,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/verify-email', 
+  method: "POST", path: "/api/verify-email", 
   handler: {
     wo: {
       passThrough: true
@@ -97,7 +97,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/verify-sms', 
+  method: "POST", path: "/api/verify-sms", 
   handler: {
     wo: {
       passThrough: true
@@ -106,7 +106,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/login-app', 
+  method: "POST", path: "/api/login-app", 
   handler: {
     wo: {
       passThrough: true
@@ -115,7 +115,7 @@ server.route({
 })
 
 server.route({
-  method: 'POST', path: '/api/verify-app', 
+  method: "POST", path: "/api/verify-app", 
   handler: {
     wo: {
       passThrough: true
@@ -125,5 +125,5 @@ server.route({
 
 
 server.start(function(){
-  console.log('front',server.info.uri)
+  console.log("front",server.info.uri)
 })

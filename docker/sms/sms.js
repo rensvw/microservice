@@ -1,16 +1,11 @@
-const config = require('./config');
-const client = require('twilio')(config.accountSid, config.authToken);
-const randomID = require('random-id');
-var Promise = require('bluebird');
-
 module.exports = function sms(options){
 
-    var act = Promise.promisify(this.act, {context: this});
+    const config = require("./config");
+    const client = require("twilio")(config.accountSid, config.authToken);
+    const randomID = require("random-id");
+    const Promise = require("bluebird");
 
-    this.add({role:'sms',cmd:'send'}, sendTextMessage);
-    this.add({role:'sms',cmd:'save',send:'true'}, sendTextMessageWithCode)
-    this.add({role:'sms',cmd:'save',send:'false'}, createSMSCodeAndSave)
-    
+    var act = Promise.promisify(this.act, {context: this});
     
     function sendTextMessage(msg, respond) {
         let message = msg.message;
@@ -32,16 +27,16 @@ module.exports = function sms(options){
     }
 
     function sendTextMessageWithCode(msg, respond) {
-        act('role:generate,cmd:code')
+        act("role:generate,cmd:code")
             .then((generatedCode) => {
-                return act('role:user,cmd:update,service:2fa', {
-                        type: 'sms',
+                return act("role:user,cmd:update,service:2fa", {
+                        type: "sms",
                         email: msg.email,
                         code: generatedCode.code
                     })
                     .then((savedCode) => {
                         if (savedCode.succes) {
-                            return act('role:sms,cmd:send', {
+                            return act("role:sms,cmd:send", {
                                     message: savedCode.code,
                                     to: savedCode.countryCode + savedCode.mobilePhoneNumber
                                 })
@@ -57,7 +52,7 @@ module.exports = function sms(options){
                         } else {
                             return respond({
                                 succes: false,
-                                message: 'User could not be found!'
+                                message: "User could not be found!"
                             })
                         }
                     })
@@ -69,10 +64,10 @@ module.exports = function sms(options){
 
 
     function createSMSCodeAndSave(msg, respond) {
-        act('role:generate,cmd:code')
+        act("role:generate,cmd:code")
         .then((generatedCode) => {
-            return act('role:user,cmd:update,service:2fa',{ 
-                type:'sms', 
+            return act("role:user,cmd:update,service:2fa",{ 
+                type:"sms", 
                 email: msg.email, 
                 code: generatedCode.code
             });
@@ -96,4 +91,8 @@ module.exports = function sms(options){
             respond(err);
         });
     }
+
+    this.add({role:"sms",cmd:"send"}, sendTextMessage);
+    this.add({role:"sms",cmd:"save",send:"true"}, sendTextMessageWithCode)
+    this.add({role:"sms",cmd:"save",send:"false"}, createSMSCodeAndSave)
 }

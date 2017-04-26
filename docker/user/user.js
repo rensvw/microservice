@@ -1,17 +1,10 @@
 module.exports = function user( options ) {
 
-const moment = require('moment');
-const uuidV4 = require('uuid/v4');
-
-this.add({role:'user',cmd:'create'}, createUser);
-this.add({role:'user',cmd:'create', checkExistingUser:'true'}, createUserWhileCheckingForExistingUser);
-this.add({'role':'user','cmd':'get'}, getUser);
-this.add({'role':'user','cmd':'get','param':'uuid'}, getUserByUuid);
-this.add({'role':'user','cmd':'update','param':'uuid'}, updateUserWithUuid);
-this.add({'role':'user','cmd':'update','service':'2fa'}, updateUserWithCode);
+const moment = require("moment");
+const uuidV4 = require("uuid/v4");
 
 function getUser(msg, respond) {
-  var user = this.make$('user');
+  var user = this.make$("user");
   var email = msg.email;
   user.load$({
     email: email
@@ -43,7 +36,7 @@ function getUser(msg, respond) {
 }
 
 function getUserByUuid(msg, respond) {
-  let user = this.make$('user');
+  let user = this.make$("user");
   let uuid = msg.uuid;
   user.load$({
     uuid: uuid
@@ -74,7 +67,7 @@ function getUserByUuid(msg, respond) {
 }
 
 function updateUserWithUuid(msg,respond){
-  var user = this.make$('user');
+  var user = this.make$("user");
   user.load$({
     email: msg.email
   }, function(err,result){
@@ -98,7 +91,7 @@ function updateUserWithUuid(msg,respond){
 
 
 function updateUserWithCode(msg,respond){
-  var user = this.make$('user');
+  var user = this.make$("user");
   user.load$({
     email: msg.email
   }, function(err,result){
@@ -108,19 +101,19 @@ function updateUserWithCode(msg,respond){
         message: "User could not be found!"
       });
     }
-    if(msg.type=='email'){
+    if(msg.type=="email"){
       result.data$(result.emailCodes.push(
         {
           code: msg.code,
-          timeCreated: moment().format('LLL'),
+          timeCreated: moment().format("LLL"),
         })
       );
     }
-    else if (msg.type=='sms'){
+    else if (msg.type=="sms"){
       result.data$(result.smsCodes.push(
         {
           code: msg.code,
-          timeCreated: moment().format('LLL'),
+          timeCreated: moment().format("LLL"),
         })
       );
 
@@ -129,7 +122,7 @@ function updateUserWithCode(msg,respond){
       uuid:uuidV4()
     });
     result.save$(function(err,user){
-      if(msg.type=='sms'){
+      if(msg.type=="sms"){
         respond(err,{ succes:true,
           message: "Succesfully added the generated code to the user object!",
           uuid: user.uuid,
@@ -155,7 +148,7 @@ function updateUserWithCode(msg,respond){
 
 //working
 function createUser(msg, respond) {
-  var user = this.make$('user');
+  var user = this.make$("user");
 {  user.email = msg.email;
   user.fullName = msg.fullName;}
   user.password = msg.password;
@@ -181,7 +174,7 @@ function createUser(msg, respond) {
 
 //Creates an user, but first checks of an user already exists with the same email.
 function createUserWhileCheckingForExistingUser(msg, respond) {
-  var user = this.make$('user');
+  var user = this.make$("user");
   user.email = msg.email;
   user.fullName = msg.fullName;
   user.password = msg.password;
@@ -191,7 +184,7 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
   user.smsCodes = [];
   user.uuid = null;
   user.emailCodes = [];
-  this.act('role:user,cmd:get', {
+  this.act("role:user,cmd:get", {
     email: user.email
   }, function (err, newUser) {
     if (err) {
@@ -217,6 +210,14 @@ function createUserWhileCheckingForExistingUser(msg, respond) {
     }
   });
 }
+
+this.add({role:"user",cmd:"create"}, createUser);
+this.add({role:"user",cmd:"create", checkExistingUser:"true"}, createUserWhileCheckingForExistingUser);
+this.add({"role":"user","cmd":"get"}, getUser);
+this.add({"role":"user","cmd":"get","param":"uuid"}, getUserByUuid);
+this.add({"role":"user","cmd":"update","param":"uuid"}, updateUserWithUuid);
+this.add({"role":"user","cmd":"update","service":"2fa"}, updateUserWithCode);
+
 };
 
  

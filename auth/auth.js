@@ -1,8 +1,8 @@
 module.exports = function auth(options) {
 
-  let moment = require('moment');
-  const Promise = require('bluebird');
-  const randomID = require('random-id');
+  let moment = require("moment");
+  const Promise = require("bluebird");
+  const randomID = require("random-id");
 
   var act = Promise.promisify(this.act, {context: this});
 
@@ -12,9 +12,9 @@ module.exports = function auth(options) {
     let password = msg.password;
     let countryCode = msg.countryCode;
     let mobilePhoneNumber = msg.mobilePhoneNumber;
-    act('role:hash,cmd:newHash',{ password: password})
+    act("role:hash,cmd:newHash",{ password: password})
     .then((hash) => {
-      return act('role:user,cmd:create,checkExistingUser:true', {
+      return act("role:user,cmd:create,checkExistingUser:true", {
         email: email,
         fullName: fullName,
         password: hash.password,
@@ -35,7 +35,7 @@ module.exports = function auth(options) {
     let email = msg.email;
     let password = msg.password;
     let seneca = this;
-    act('role:user,cmd:get', {
+    act("role:user,cmd:get", {
         email: email
       })
       .then((user) => {
@@ -45,7 +45,7 @@ module.exports = function auth(options) {
             message: "Username or password is incorrect!"
           });
         } else {
-          act('role:hash,cmd:comparePasswords', {
+          act("role:hash,cmd:comparePasswords", {
               password: password,
               hash: user.password
             })
@@ -77,7 +77,7 @@ module.exports = function auth(options) {
       });
   }
 
-  this.add({role:'auth',cmd:'signup'}, signup);     
-  this.add({role:'auth',cmd:'authenticate',mfa:'none'}, authenticate);
-  
+  this.add({role:"auth",cmd:"signup"}, signup);     
+  this.add({role:"auth",cmd:"authenticate",mfa:"none"}, authenticate);
+
   };

@@ -1,11 +1,11 @@
 module.exports = function(options){
 
-const randomID = require('random-id');
-const uuidV4 = require('uuid/v4');
-const authenticator = require('authenticator');
+const randomID = require("random-id");
+const uuidV4 = require("uuid/v4");
+const authenticator = require("authenticator");
 
 function generateCode(msg,respond){
-    let code = randomID(6, '0');
+    let code = randomID(6, "0");
     respond({code:code});
 }
 
@@ -25,13 +25,13 @@ function generateTOTPUri(msg,respond){
     let timeFrame = msg.time || 30;
     let digits = msg.digits || 6;
     let formattedKey = msg.key;
-    var uri = authenticator.generateTotpUri(formattedKey, email, name, 'SHA1', digits, timeFrame);
+    var uri = authenticator.generateTotpUri(formattedKey, email, name, "SHA1", digits, timeFrame);
     respond({uri:uri});
 }
 
-this.add({role: 'generate',cmd: 'code'}, generateCode);
-this.add({role: 'generate',cmd: 'uuid'}, generateUuid);
-this.add({role: 'generate',cmd: 'totp-key'}, generateTOTPKey);
-this.add({role: 'generate',cmd: 'totp-uri'}, generateTOTPUri);
+this.add({role: "generate",cmd: "code"}, generateCode);
+this.add({role: "generate",cmd: "uuid"}, generateUuid);
+this.add({role: "generate",cmd: "totp-key"}, generateTOTPKey);
+this.add({role: "generate",cmd: "totp-uri"}, generateTOTPUri);
 
 };

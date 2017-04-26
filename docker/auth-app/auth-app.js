@@ -1,40 +1,20 @@
 module.exports = function authenticatorAppAuth(option) {
 
-    const authenticator = require('authenticator');
-    const Promise = require('bluebird');
+    const authenticator = require("authenticator");
+    const Promise = require("bluebird");
 
     var act = Promise.promisify(this.act, {
         context: this
     });
 
-    this.add({
-        role: 'auth',
-        cmd: 'authenticate',
-        mfa: 'app'
-    }, authenticate);
-    this.add({
-        role: 'auth',
-        cmd: 'verify',
-        mfa: 'app'
-    }, verifyToken);
-    this.add({
-        role: 'auth',
-        cmd: 'create',
-        mfa: 'app',
-        url: 'uri'
-    }, createUri);
-    this.add({
-        role: 'auth',
-        cmd: 'save',
-        mfa: 'new-app',
-    }, verifyUriAndSaveToAccount);
+    
 
-    'use strict';
+    "use strict";
 
     function authenticate(msg, respond) {
         let email = msg.email;
         let password = msg.password;
-        act('role:user,cmd:get,key:totp', {
+        act("role:user,cmd:get,key:totp", {
                 email: email
             })
             .then((key) => {
@@ -44,18 +24,18 @@ module.exports = function authenticatorAppAuth(option) {
                         message: "Please first connect the authenticator app to your account!"
                     })
                 } else {
-                    return act('role:user,cmd:get', {
+                    return act("role:user,cmd:get", {
                             email: email
                         })
                         .then((user) => {
                             if (user.succes) {
-                                act('role:hash,cmd:comparePasswords', {
+                                act("role:hash,cmd:comparePasswords", {
                                         password: password,
                                         hash: user.password
                                     })
                                     .then((authenticated) => {
                                         if (authenticated.succes) {
-                                            return act('role:user,cmd:update,param:uuid', {
+                                            return act("role:user,cmd:update,param:uuid", {
                                                     email: email
                                                 })
                                                 .then((result) => {
@@ -100,7 +80,7 @@ module.exports = function authenticatorAppAuth(option) {
         let uuid = msg.uuid;
         let code = msg.code;
         let seneca = this;
-        act('role:user,cmd:get,param:uuid', {
+        act("role:user,cmd:get,param:uuid", {
                 uuid: uuid
             })
             .then((user) => {
@@ -108,7 +88,7 @@ module.exports = function authenticatorAppAuth(option) {
                 if (!user) {
                     respond(user);
                 } else if (user) {
-                    act('role:user,cmd:get,key:totp', {
+                    act("role:user,cmd:get,key:totp", {
                             email: user.email
                         })
                         .then((key) => {
@@ -118,7 +98,7 @@ module.exports = function authenticatorAppAuth(option) {
                                     message: "Please first connect the authenticator app to your account!"
                                 })
                             } else {
-                                return act('role:user,cmd:get,key:totp', {
+                                return act("role:user,cmd:get,key:totp", {
                                         email: this.user.email
                                     })
                                     .then((data) => {
@@ -165,9 +145,9 @@ module.exports = function authenticatorAppAuth(option) {
     }
 
     function createUri(msg,respond){
-        act('role:generate,cmd:totp-key')
+        act("role:generate,cmd:totp-key")
         .then((data)=>{
-            return act('role:generate,cmd:totp-uri',{
+            return act("role:generate,cmd:totp-uri",{
                 email: msg.email,
                 key: data.key
             })
@@ -197,7 +177,7 @@ module.exports = function authenticatorAppAuth(option) {
                 message: "Code is incorrect!"
             });
         } else if (verify.delta == 0) {
-            act('role:user,create,type:totp',{
+            act("role:user,create,type:totp",{
                 email: msg.email
             })
             .then((result)=>{
@@ -216,5 +196,27 @@ module.exports = function authenticatorAppAuth(option) {
             });
         }
     }
+
+    this.add({
+        role: "auth",
+        cmd: "authenticate",
+        mfa: "app"
+    }, authenticate);
+    this.add({
+        role: "auth",
+        cmd: "verify",
+        mfa: "app"
+    }, verifyToken);
+    this.add({
+        role: "auth",
+        cmd: "create",
+        mfa: "app",
+        url: "uri"
+    }, createUri);
+    this.add({
+        role: "auth",
+        cmd: "save",
+        mfa: "new-app",
+    }, verifyUriAndSaveToAccount);
 
 }
