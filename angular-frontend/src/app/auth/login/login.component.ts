@@ -12,6 +12,8 @@ export class LoginComponent implements OnInit {
 
   pageTitle: string = "Login Page";
   credentials: ICredentials;
+  email: string;
+  password: string;
 
   constructor(private _authService: AuthService, private _router: Router) { }
 

@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 networks:
   securitypoc:
@@ -11,7 +11,7 @@ services:
       PORT: 39000
       HOST: base0
       BASES: base0:39000,base1:39001
-      SILENT: 'false'
+      SILENT: "false"
     networks:
       securitypoc:
         aliases: 
@@ -25,7 +25,7 @@ services:
       PORT: 39001
       HOST: base1
       BASES: base0:39000,base1:39001
-      SILENT: 'false'
+      SILENT: "false"
     networks:
       securitypoc:
         aliases: 
@@ -35,9 +35,9 @@ services:
   api:
     image: api
     environment:
-      HOST: 'eth0'
+      HOST: "eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc
     deploy:
@@ -45,11 +45,11 @@ services:
   front:
     image: front
     environment:
-      HOST: 'eth2'
+      HOST: "eth2"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     ports:
-      - '8000:8000'
+      - "8000:8000"
     networks:
       - securitypoc
     deploy:
@@ -57,9 +57,9 @@ services:
   user:
     image: user
     environment: 
-      HOST: '@eth0'
+      HOST: "@eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc
     deploy:
@@ -67,9 +67,9 @@ services:
   auth:
     image: auth
     environment:
-      HOST: '@eth0'
+      HOST: "@eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc 
     deploy:
@@ -78,11 +78,11 @@ services:
     image: repl
     environment:
       REPL_HOST: 0.0.0.0
-      HOST: '@eth2'
+      HOST: "@eth2"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     ports:
-      - '10001:10001'
+      - "10001:10001"
     networks:
       - securitypoc
     deploy:
@@ -90,9 +90,9 @@ services:
   generators:
     image: generators
     environment:
-      HOST: '@eth0'
+      HOST: "@eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc
     deploy:
@@ -100,9 +100,9 @@ services:
   email:
     image: email
     environment:
-      HOST: '@eth0'
+      HOST: "@eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc
     deploy:
@@ -110,9 +110,9 @@ services:
   sms:
     image: sms
     environment:
-      HOST: '@eth0'
+      HOST: "@eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc
     deploy:
@@ -120,9 +120,9 @@ services:
   hashing:
     image: hashing
     environment:
-      HOST: '@eth0'
+      HOST: "@eth0"
       BASES: base0:39000,base1:39001
-      SILENT: 'true'
+      SILENT: "true"
     networks:
       - securitypoc
     deploy:
@@ -130,9 +130,9 @@ services:
   zipkin:
     image: openzipkin/zipkin
     ports:
-      - '9411:9411'
+      - "9411:9411"
   angular-frontend:
     image: angular-frontend
     ports:
-      - '80-80'
+      - "80-80"
   

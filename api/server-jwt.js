@@ -156,7 +156,7 @@ const testAuth = (request, reply) => {
 const login = (request, reply) => {
   if (request.auth.isAuthenticated) {
     return reply({
-      message: "You're already authenticated!"
+      message: "you're already authenticated!"
     });
   }
   let email = request.payload.email;
@@ -203,7 +203,7 @@ const authorizeAndSendSMSCode = (request,reply) => {
 const verifySMSCodeAndLogin = (request, reply) => {
   if (request.auth.isAuthenticated) {
     return reply({
-      message: "You're already authenticated!"
+      message: "you're already authenticated!"
     });
   }
   let code = request.payload.code;
@@ -258,7 +258,7 @@ const signUp = (request, reply) => {
 const authorizeAndSendEmailCode = (request,reply) => {
   if (request.auth.isAuthenticated) {
     return reply({
-      message: "You're already authenticated!"
+      message: "you're already authenticated!"
     });
   }
   let email = request.payload.email;
@@ -281,7 +281,7 @@ const authorizeAndSendEmailCode = (request,reply) => {
 const verifyEmailCodeAndLogin = (request, reply) => {
   if (request.auth.isAuthenticated) {
     return reply({
-      message: "You're already authenticated!"
+      message: "you're already authenticated!"
     });
   }
   let code = request.payload.code;
@@ -308,7 +308,7 @@ const verifyEmailCodeAndLogin = (request, reply) => {
 const authorizeAndDirectForTOTPApp = (request,reply) => {
   if (request.auth.isAuthenticated) {
     return reply({
-      message: "You're already authenticated!"
+      message: "you're already authenticated!"
     });
   }
   let email = request.payload.email;
@@ -331,7 +331,7 @@ const authorizeAndDirectForTOTPApp = (request,reply) => {
 const verifyTOTPCodeAndLogin = (request, reply) => {
   if (request.auth.isAuthenticated) {
     return reply({
-      message: "You're already authenticated!"
+      message: "you're already authenticated!"
     });
   }
   let code = request.payload.code;

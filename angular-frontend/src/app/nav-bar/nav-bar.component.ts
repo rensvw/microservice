@@ -14,7 +14,7 @@ export class NavBarComponent implements OnInit {
 
   pageTitle: string = 'SecurityPoC';
 
-  constructor(private _authService: AuthService) { }
+  constructor(public _authService: AuthService) { }
 
   ngOnInit() {
 

@@ -3,9 +3,7 @@ module.exports = function auth(options) {
   const moment = require("moment");
   const Promise = require("bluebird");
 
-  var act = Promise.promisify(this.act, {context: this});
-
- 
+  var act = Promise.promisify(this.act, {context: this})
 
   function authenticateAndSendSMSCode(msg, respond) {
     let email = msg.email;
@@ -28,7 +26,7 @@ module.exports = function auth(options) {
                     return respond({
                       succes: true,
                       uuid: result.uuid,
-                      message: "Username and password are correct, we"ve send you a code in a text message!"
+                      message: "Username and password are correct, we've send you a code in a text message!"
                     });
                   })
                   .catch((err) => {

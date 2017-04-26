@@ -19,7 +19,7 @@ module.exports = function auth(options) {
                     return respond({
                       succes: true,
                       uuid: result.uuid,
-                      message: "Username and password are correct, we"ve send you a code in an email!"
+                      message: "Username and password are correct, we've send you a code in an email!"
                     });
                   })
                   .catch((err) => {
