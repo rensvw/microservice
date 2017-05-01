@@ -4,7 +4,7 @@ const Promise = require("bluebird");
 var act = Promise.promisify(this.act, {context: this});
 
 function getUserWithKey(msg, respond) {
-  var user = this.make$("user-app");
+  var user = this.make$("userapp");
   var email = msg.email;
   user.load$({
     email: email
@@ -30,9 +30,9 @@ function getUserWithKey(msg, respond) {
 
 //Creates an user, but first checks of an user already exists with the same email.
 function createUserWithKeyWhileCheckingForExistingUser(msg, respond) {
-  var user = this.make$("user-app");
+  var user = this.make$("userapp");
   user.email = msg.email;
-  this.act("role:user,cmd:get,type:totp", {
+  this.act("role:userapp,cmd:get,type:totp", {
     email: user.email
   }, function (err, newUser) {
     if (err) {
@@ -60,8 +60,8 @@ function createUserWithKeyWhileCheckingForExistingUser(msg, respond) {
   });
 }
 
-this.add({role:"user",cmd:"create",type:"totp"}, createUserWithKeyWhileCheckingForExistingUser);
-this.add({role:"user",cmd:"get",key:"totp"}, getUserWithKey);
+this.add({role:"userapp",cmd:"create",type:"totp"}, createUserWithKeyWhileCheckingForExistingUser);
+this.add({role:"userapp",cmd:"get",type:"totp"}, getUserWithKey);
 
 };
 

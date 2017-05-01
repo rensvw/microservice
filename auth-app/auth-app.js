@@ -14,7 +14,7 @@ module.exports = function authenticatorAppAuth(option) {
     function authenticate(msg, respond) {
         let email = msg.email;
         let password = msg.password;
-        act("role:user,cmd:get,key:totp", {
+        act("role:userapp,cmd:get,type:totp", {
                 email: email
             })
             .then((key) => {
@@ -88,7 +88,7 @@ module.exports = function authenticatorAppAuth(option) {
                 if (!user) {
                     respond(user);
                 } else if (user) {
-                    act("role:user,cmd:get,key:totp", {
+                    act("role:userapp,cmd:get,type:totp", {
                             email: user.email
                         })
                         .then((key) => {
@@ -98,7 +98,7 @@ module.exports = function authenticatorAppAuth(option) {
                                     message: "Please first connect the authenticator app to your account!"
                                 })
                             } else {
-                                return act("role:user,cmd:get,key:totp", {
+                                return act("role:userapp,cmd:get,type:totp", {
                                         email: this.user.email
                                     })
                                     .then((data) => {
@@ -106,7 +106,7 @@ module.exports = function authenticatorAppAuth(option) {
                                             console.log(data)
                                             respond("Error, key not found")
                                         } else {
-                                            let verify = authenticator.verifyToken(data.key, code);
+                                            let verify = authenticator.verifyToken(data.key.toString(), code.toString());
                                             if (verify === null) {
                                                 return respond({
                                                     succes: false,
@@ -177,8 +177,9 @@ module.exports = function authenticatorAppAuth(option) {
                 message: "Code is incorrect!"
             });
         } else if (verify.delta === 0) {
-            act("role:user,create,type:totp",{
-                email: msg.email
+            act("role:userapp,cmd:create,type:totp",{
+                email: msg.email,
+                key: secret
             })
             .then((result)=>{
                 return respond({

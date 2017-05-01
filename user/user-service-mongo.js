@@ -8,8 +8,8 @@ seneca
   .use("basic")
   .use(require("./user"))
   .use("mongo-store", {
-  //uri: "mongodb://rensvanw:zb74jt3bzn.@ds157439.mlab.com:57439/qnh"
-  uri: "mongodb://172.17.0.2:27017/QNHSecurityPoC"
+  uri: "mongodb://rensvanw:zb74jt3bzn.@ds157439.mlab.com:57439/qnh"
+  //uri: "mongodb://172.17.0.2:27017/QNHSecurityPoC"
   
 })
 .use("zipkin-tracer", {sampling:1})
